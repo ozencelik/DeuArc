@@ -18,10 +18,11 @@ public class MainWindow {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				System.out.println("OZENC BUNU GOR");
 			}
 		});
 	}
-	system.out.println("OZENC BUNU GOR");
+	
 	/**
 	 * Create the application.
 	 */
