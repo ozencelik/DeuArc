@@ -21,7 +21,7 @@ public class MainWindow {
 			}
 		});
 	}
-
+	system.out.println("OZENC BUNU GOR");
 	/**
 	 * Create the application.
 	 */
