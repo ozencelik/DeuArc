@@ -9,6 +9,7 @@ public class MainWindow {
 	/**
 	 * Launch the application.
 	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -19,6 +20,7 @@ public class MainWindow {
 					e.printStackTrace();
 				}
 				System.out.println("OZENC BUNU GOR");
+				System.out.println("DEniz bunu görme");
 			}
 		});
 	}
