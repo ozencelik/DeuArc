@@ -21,6 +21,7 @@ public class MainWindow {
 				}
 				System.out.println("OZENC BUNU GOR");
 				System.out.println("DEniz bunu görme");
+				System.out.println("ÜnBurak Ne yaparsan yap :)");
 			}
 		});
 	}
