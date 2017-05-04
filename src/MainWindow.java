@@ -19,9 +19,7 @@ public class MainWindow {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				System.out.println("OZENC BUNU GOR");
-				System.out.println("DEniz bunu görme");
-				System.out.println("ÜnBurak Ne yaparsan yap :)");
+				System.out.println("Hadi Caným");
 			}
 		});
 	}
