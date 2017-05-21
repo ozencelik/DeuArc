@@ -1,0 +1,12 @@
+ORG C 2
+
+LD R0,@C
+LD R1,@B
+ADD R2,R0,R1
+ST R2,#10 %burasýný @S yapmayý unutma.
+HLT
+
+ORG D 3
+C: DEC 3
+S: HEX 2a
+B: BIN 0010
