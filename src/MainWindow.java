@@ -71,7 +71,7 @@ public class MainWindow {
 		
 		
 		frame = new JFrame();
-		frame.setBounds(450, 150, 1100, 700);
+		frame.setBounds(450, 150, 1150, 750);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 

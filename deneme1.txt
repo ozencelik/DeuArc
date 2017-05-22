@@ -1,12 +1,16 @@
-ORG C 2
+ORG C 3
 
-LD R0,@C
 LD R1,@B
+LD R0,@D
 ADD R2,R0,R1
-ST R2,#10 %burasýný @S yapmayý unutma.
+ST R2,#10
+NOT R1,R3
+INC R2
 HLT
 
 ORG D 3
-C: DEC 3
-S: HEX 2a
-B: BIN 0010
+A: DEC 7
+B: DEC 3
+C: DEC 8
+S: HEX F
+D: BIN 1011

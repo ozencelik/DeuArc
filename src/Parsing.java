@@ -7,8 +7,7 @@ import java.io.IOException;
 import com.sun.org.apache.xerces.internal.impl.dv.xs.DecimalDV;
 
 public class Parsing {
-
-
+	
 	int[][] instructionDecimal, stackDecimal;
 	String[][] dataDecimal;
 	int letterCounter, dataCount;
@@ -23,7 +22,8 @@ public class Parsing {
 	// table[4] means - S2
 
 	// #define ORG -1
-	// table[][1] = ORG (-1)
+	// table[][0] = 0 - Q = 0 (default)
+	// table[][1] = ORG - (-1)
 	// table[][2] = C (0) or D (1)
 	// table[][3] = 25 (Hangi satýrdan baþlýyorsa o sayý)
 	
@@ -107,8 +107,6 @@ public class Parsing {
 							// dataArray[2] integer or something else control ????
 							
 							
-							
-							
 							while ((butterflyLine = butterflyReader.readLine()) != null) {
 								
 								if (butterflyLine.equalsIgnoreCase("END")) break;
@@ -116,26 +114,26 @@ public class Parsing {
 								String[] str = butterflyLine.trim().split(":");
 								if (str.length == 2) {
 
-									
-									dataDecimal[dataCount][0] = str[0];
-									
+									String butterfly = str[0];
 									str = str[1].trim().split(" "); // Again split operation according to space.
 									
-									System.out.println("str[0] : " + str[0] + " - str[1] : " + str[1] + " dataCount : " + dataCount);
 									if (str.length == 2) {
 										
 										
 										if (str[0].equalsIgnoreCase("HEX")) {
 											
-											dataDecimal[dataCount][1] = String.valueOf(Integer.parseInt(str[1], 16));
+											dataDecimal[ Integer.parseInt(str[1].trim(), 16) ][0] = butterfly;
+											dataDecimal[ Integer.parseInt(str[1].trim(), 16) ][1] = String.valueOf(Integer.parseInt(str[1], 16));
 											
 										} else if (str[0].equalsIgnoreCase("DEC")) {
 											
-											dataDecimal[dataCount][1] = str[1];
+											dataDecimal[ Integer.parseInt(str[1]) ][0] = butterfly;
+											dataDecimal[ Integer.parseInt(str[1]) ][1] = str[1];
 											
 										} else if (str[0].equalsIgnoreCase("BIN")) {
 											
-											dataDecimal[dataCount][1] = String.valueOf(Integer.parseInt(str[1], 2));
+											dataDecimal[ Integer.parseInt(str[1], 2) ][0] = butterfly;
+											dataDecimal[ Integer.parseInt(str[1], 2) ][1] = String.valueOf(Integer.parseInt(str[1], 2));
 											
 										} else System.out.println("HEX, DEC, BIN dýþýnda bilinmeyen bir argüman girdiniz.");
 										
@@ -153,17 +151,31 @@ public class Parsing {
 					}
 				}
 				int lineCounter = 0;
-				while ((line = reader.readLine()) != null) { // satýr satýr cebimizde.
+				boolean isCodeFinish = false;
+				while ( (line = reader.readLine()) != null ) { // satýr satýr cebimizde.
 					
 					boolean exist = false;
+					line = line.replace("\t", " "); // Replace all tabs with 1 space.
+					line = line.replace("\\s+", " "); // Replace all space with one space.
 					splitSpace = line.split(" ");
+					
 					
 					if (splitSpace.length > 1) {
 						
+						
 						splitComma = splitSpace[1].split(",");
 						
-						
-							switch(splitSpace[0].trim().toUpperCase()) {
+						String selection;
+						if (line.split(":").length > 1) {
+							
+							splitSpace[1] = splitSpace[1].replace("\t", " "); // Replace all tabs with 1 space.
+							splitSpace[1] = splitSpace[1].replace("\\s+", " "); // Replace all space with one space.
+							selection = splitSpace[1].trim();
+						} else {
+							
+							selection = splitSpace[0].trim();
+						}
+							switch(selection.toUpperCase()) {
 							
 							case "ORG":
 								
@@ -174,7 +186,7 @@ public class Parsing {
 									if (splitSpace[1].trim().equalsIgnoreCase("C")) {
 										
 										lineCounter = Integer.parseInt(splitSpace[2]) - 1;
-										instructionDecimal[lineCounter][0] = 0; // Q = 0 (default)
+//										instructionDecimal[lineCounter][0] = 0; // Q = 0 (default)
 										instructionDecimal[lineCounter][1] = -1; // -1 mean ORG
 										instructionDecimal[lineCounter][2] = 1; // 1 mean D
 										instructionDecimal[lineCounter][3] = Integer.parseInt(splitSpace[2]); // near integer of ORG D (int)
@@ -182,6 +194,8 @@ public class Parsing {
 								}
 								break;
 							case "HLT":
+								
+								isCodeFinish = true;
 								
 								break;
 							case "INC":
@@ -193,8 +207,9 @@ public class Parsing {
 							case "DBT":
 								
 								break;
-							case "NOT":
+							case "NOT": // NOT OPERATION
 								
+								Not (splitSpace, lineCounter); // lineCounter = According to ORG
 								break;
 							case "AND":
 								
@@ -204,6 +219,8 @@ public class Parsing {
 								break;
 							case "CAL":
 								
+								System.out.println("CAL'A giriyor.");
+								Cal (splitSpace, lineCounter, file); // lineCounter = According to ORG
 								break;
 							case "RET":
 								
@@ -247,7 +264,79 @@ public class Parsing {
 		}
 	}
 	
-	public void Storage(String[] str, int line) {
+	private void Not (String[] str, int line) {
+		
+		
+		
+		instructionDecimal[line][0] = 0; // Q = 0 (default);
+		instructionDecimal[line][1] = 4; // The value of opcode;
+		
+		
+		if (str.length > 2) {
+			
+			System.out.println(str[2].trim());
+			if (str[2].trim().equals("R0")) instructionDecimal[line][2] = 0;
+			else if (str[2].trim().equals("R1")) instructionDecimal[line][2] = 1;
+			else if (str[2].trim().equals("R2")) instructionDecimal[line][2] = 2;
+		}
+		
+	}
+	
+	private void Cal (String[] str, int line,File f) {
+		
+		
+		
+		if (str.length > 1) {
+			instructionDecimal[line][0] = 0; // Q = 0 (default)
+			instructionDecimal[line][1] = 10; // Opcode of 'CAL' operation
+			
+			BufferedReader subProgramFinder;
+			try {
+				
+				subProgramFinder =  new BufferedReader(new FileReader(f));
+				
+				String butterflyLine;
+				String[] splitColon;
+				String[] splitSpace;
+				str[1] = str[1].replace("\t", " "); // Replace all tabs with 1 space.
+				str[1] = str[1].trim().replace("\\s+", " "); // Replace all space with one space.
+				String[] expression = str[1].trim().split(" "); // Split by (" ");
+				
+				int whichLine = 0;
+				while ((butterflyLine = subProgramFinder.readLine()) != null) {
+					
+					splitColon = butterflyLine.trim().split(":"); // split by colon (:)
+					splitSpace = butterflyLine.trim().split(" ");
+					
+					if (splitSpace.length > 1) {
+					
+						if (splitSpace.length == 3) {
+
+							
+							if (splitSpace[1].trim().equalsIgnoreCase("C")) {
+								
+								whichLine = Integer.parseInt(splitSpace[2]) - 1;
+							}
+						}
+						if (splitColon.length == 2) {
+							
+							if (splitColon[0].equalsIgnoreCase(expression[0].trim())) { // Ahada found demektir.
+								
+								System.out.println("a:" + whichLine + " b:" + line);
+							}
+						}
+						whichLine++;
+					}
+					
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			
+		}
+	}
+	
+	private void Storage(String[] str, int line) {
 		
 		if (str.length == 2) {
 			
@@ -269,7 +358,7 @@ public class Parsing {
 
 
 				int butterfly = 0;
-				if ((butterfly = whereisData(dataDecimal,dataCount, str[1].substring(1))) != -1) {
+				if ((butterfly = whereisData(dataDecimal,16, str[1].substring(1))) != -1) {
 
 					instructionDecimal[line][0] = 0; // Q = 0;
 					instructionDecimal[line][1] = 7;
@@ -290,14 +379,12 @@ public class Parsing {
 		
 	}
 	
-	public void Add (String[] str, int line) {
+	private void Add (String[] str, int line) {
 		
 		
 		
 		if (str.length == 3) {
 			
-			System.out.println("lineCounter : " + line);
-			System.out.println("ADD ~ 0 : " + str[0] + " - 1 : " + str[1] + " - 2 : " + str[2]);
 			instructionDecimal[line][0] = 0; // Q = 0 (default)
 			instructionDecimal[line][1] = 0;
 			
@@ -319,7 +406,7 @@ public class Parsing {
 		}
 	}
 	
-	public void Load (String[] str, int line) {
+	private void Load (String[] str, int line) {
 		
 		if (str.length == 2) {
 			
@@ -341,7 +428,7 @@ public class Parsing {
 
 
 				int butterfly = 0;
-				if ((butterfly = whereisData(dataDecimal,dataCount, str[1].substring(1))) != -1) {
+				if ((butterfly = whereisData(dataDecimal,16, str[1].substring(1))) != -1) {
 
 					instructionDecimal[line][0] = 0; // Q = 0
 					instructionDecimal[line][1] = 6;
@@ -351,10 +438,10 @@ public class Parsing {
 					else if (str[0].trim().equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
 					
 					instructionDecimal[line][3] = 0; // 0 attým, çünkü decimal, binary çevirirken içini güncellicem.
-					System.out.println("bFly : " + butterfly + " " + dataDecimal[butterfly][1]);
 					instructionDecimal[line][4] = Integer.parseInt(dataDecimal[butterfly][1]); // decimali s1s2 diye bölmeden attým.
 				}
 				else {
+					
 					
 					System.out.println(str[1].substring(1) + " diye bir deðer yok.");
 				}
@@ -362,7 +449,8 @@ public class Parsing {
 		}
 	}
 	
-	public void fillTableWithMinus9 () {
+	private void fillTableWithMinus9 () {
+
 		
 		for (int i = 0; i < instructionDecimal.length; i++) {
 			
@@ -372,4 +460,5 @@ public class Parsing {
 			}
 		}
 	}
+	
 }

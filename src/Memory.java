@@ -35,6 +35,7 @@ public class Memory {
 			
 		}
 	}
+	
 	public DefaultTableModel getButterfly() {
 		return butterfly;
 	}
