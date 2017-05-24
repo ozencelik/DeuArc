@@ -766,6 +766,7 @@ public class Screen {
 	public String T0 (int arr[][]) {
 
 		String opcode = "";
+		///
 		for (int j = 0; j < arr[instructionMemory.getCounter()].length; j++) {
 
 			opcode += tableInstruction[instructionMemory.getCounter()][j];
