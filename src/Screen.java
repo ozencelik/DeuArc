@@ -1162,7 +1162,6 @@ public class Screen {
 		}
 	}
 	
-
 	public void fillLabelArrayFromData (String[][] str) {
 		
 		for (int i = 0; i < str.length; i++) {
