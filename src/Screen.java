@@ -332,7 +332,50 @@ public class Screen {
 		}
 	}
 
+	private void updateOutr() {
+	
+		if (textfieldOutr.getText().substring(0,1).equalsIgnoreCase("E")) { // E means I have to multiply with minus 1.
+			// When I directly multiply with minus 1, the function that convert to binary is add one 28 times, because integer can be 32 bit.
 
+			int butterfly = Integer.parseInt(textfieldOutr.getText().substring(1));
+			textfieldOutr.setText(" ");
+			if (isHexa) {
+
+
+				textfieldOutr.setText(Integer.toHexString(butterfly));
+			}
+			else if (isDecimal) {
+
+				textfieldOutr.setText(String.valueOf(butterfly));
+			}
+			else if (isBinary) {
+
+				butterfly = 15 - butterfly;
+				if (butterfly < 2) textfieldOutr.setText("111" + Integer.toBinaryString(butterfly));
+				else if (butterfly < 4) textfieldOutr.setText("11" + Integer.toBinaryString(butterfly));
+				else if (butterfly < 8) textfieldOutr.setText("1" + Integer.toBinaryString(butterfly));
+				else if (butterfly < 16) textfieldOutr.setText(Integer.toBinaryString(butterfly));
+			}
+
+		} else {
+
+			int butterfly = Integer.parseInt(textfieldOutr.getText());
+			textfieldOutr.setText(" ");
+			if (isHexa) {
+
+				textfieldOutr.setText(Integer.toHexString(butterfly));
+			}
+			else if (isDecimal) {
+
+				textfieldOutr.setText(String.valueOf(butterfly));
+			}
+			else if (isBinary) {
+
+				textfieldOutr.setText(fillZeros(Integer.toBinaryString(butterfly), 4));
+			}
+		}
+	}
+	
 	private String[][] toHex (int[][] arr) { // toBinary GIBI YAPMAK LAZIM
 
 		String[][] butterfly = new String[32][5];
@@ -432,6 +475,7 @@ public class Screen {
 
 		return butterfly;
 	}
+	
 	private String[][] toDecimal (int[][] arr) { // toBinary GIBI YAPMAK LAZIM
 
 		String[][] butterfly = new String[32][5];
@@ -920,12 +964,12 @@ public class Screen {
 		instructionMemory.increaseCounter();
 	}
 
-
 	public void T3 (int[][] arr, int i) {
 
-		int R0 = -1, R1 = -1, R2 = -1;
+		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
 		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
-
+		int value = 0;
+		
 		switch ( arr[ i ][1] ) {
 
 		case 0: // ADD
@@ -942,7 +986,6 @@ public class Screen {
 			break;
 		case 1: // INC
 
-
 			if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
 			// it will return integer according to clicked button. (hexa, binary, decimal)
 
@@ -951,73 +994,203 @@ public class Screen {
 
 			if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
 			// it will return integer according to clicked button. (hexa, binary, decimal)
+			
+			if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText());
+			
 
 			if (tableInstruction[ butterfly ][2].equalsIgnoreCase("00")) {
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
+					if ( R0 + 1 > 15 ) {
+
+						value = (R0 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR0.setText("");
-					textfieldR0.setText( String.valueOf( R0 + 1 ) );
+					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
 				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) {
 
-					textfieldR0.setText("");
-					textfieldR0.setText( String.valueOf( R1 + 1 ) );
-					updateR0();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+					if ( R1 + 1 > 15 ) {
 
+						value = (R1 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR0.setText("");
-					textfieldR0.setText( String.valueOf( R2 + 1 ) );
+					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
-				} else {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
-				}
+					if ( R1 + 2 > 15 ) {
+
+						value = (R2 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR0.setText("");
+					textfieldR0.setText( String.valueOf( value ) );
+					updateR0();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
+					
+					
+					textfieldR1.setText("");
+					if ( Rin + 1 > 15 ) {
+
+						value = (Rin + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR0.setText("");
+					textfieldR0.setText( String.valueOf( value ) );
+					updateR0();
+				} else System.out.println("Inc işleminde, boş beleş bir register seçmişsiniz :(");
 
 			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("01")) {
 
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
+					if ( R0 + 1 > 15 ) {
+
+						value = (R0 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR1.setText("");
-					textfieldR1.setText( String.valueOf( R0 + 1 ) );
+					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
 				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) {
 
-					textfieldR1.setText("");
-					textfieldR1.setText( String.valueOf( R1 + 1 ) );
-					updateR1();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+					if ( R1 + 1 > 15 ) {
 
+						value = (R1 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR1.setText("");
-					textfieldR1.setText( String.valueOf( R2 + 1 ) );
+					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
-				} else {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
-				}
+					if ( R2 + 1 > 15 ) {
+
+						value = (R2 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR1.setText("");
+					textfieldR1.setText( String.valueOf( value ) );
+					updateR1();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
+					
+					
+					textfieldR1.setText("");
+					if ( Rin + 1 > 15 ) {
+
+						value = (Rin + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR1.setText("");
+					textfieldR1.setText( String.valueOf( value ) );
+					updateR1();
+				} else System.out.println("Inc işleminde, boş beleş bir register seçmişsiniz :(");
 
 			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("10")) {
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
+					if ( R0 + 1 > 15 ) {
+
+						value = (R0 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR2.setText("");
-					textfieldR2.setText( String.valueOf( R0 + 1 ) );
+					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
 				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) {
 
+					if ( R1 + 1 > 15 ) {
+
+						value = (R1 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR2.setText("");
-					textfieldR2.setText( String.valueOf( R1 + 1 ) );
+					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
 					textfieldR2.setText("");
-					textfieldR2.setText( String.valueOf( R2 + 1 ) );
-					updateR2();
-				} else {
+					if ( R2 + 1 > 15 ) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
-				}
+						value = (R2 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR2.setText("");
+					textfieldR2.setText( String.valueOf( value ) );
+					updateR2();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
+					
+					
+					textfieldR2.setText("");
+					if ( Rin + 1 > 15 ) {
+
+						value = (Rin + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR2.setText("");
+					textfieldR2.setText( String.valueOf( value ) );
+					updateR2();
+				} else System.out.println("Inc işleminde, boş beleş bir register seçmişsiniz :(");
+			}
+			else if (tableDecimalInstruction[ butterfly ][2] == 3) {
+				
+				
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) { // == 0 (R0)
+
+					textfieldOutr.setText("");
+					if ( R0 + 1 > 15 ) {
+
+						value = (R0 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( value ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 1 && R1 != -1) { // == 1 (R1)
+
+					textfieldOutr.setText("");
+					if ( R1 + 1 > 15 ) {
+
+						value = (R1 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( value ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 2 && R2 != -1) { // == 2 (R2)
+
+					textfieldOutr.setText("");
+					if ( R2 + 1 > 15 ) {
+
+						value = (R2 + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( value ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
+					
+					
+					textfieldOutr.setText("");
+					if ( Rin + 1 > 15 ) {
+
+						value = (Rin + 1) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( value ) );
+					updateOutr();
+				} else System.out.println("Inc işleminde, boş beleş bir register seçmişsiniz :(");
+			}
+			else {
+				
+				System.out.println("INC işleminde, böyle bir registerı seçemezsin");
 			}
 
 			isNextLine = true;
@@ -1035,68 +1208,195 @@ public class Screen {
 
 			if (tableInstruction[ butterfly ][2].equalsIgnoreCase("00")) {
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
+					if ( R0 * 2 > 15 ) {
+
+						value = (R0 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR0.setText("");
-					textfieldR0.setText( String.valueOf( R0 * 2 ) );
+					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
 				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) {
 
-					textfieldR0.setText("");
-					textfieldR0.setText( String.valueOf( R1 * 2 ) );
-					updateR0();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+					if ( R1 * 2 > 15 ) {
 
+						value = (R1 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR0.setText("");
-					textfieldR0.setText( String.valueOf( R2 * 2 ) );
+					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
-				} else {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
-				}
+					if ( R2 * 2 > 15 ) {
+
+						value = (R2 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR0.setText("");
+					textfieldR0.setText( String.valueOf( value ) );
+					updateR0();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
+					
+					
+					textfieldOutr.setText("");
+					if ( Rin * 2 > 15 ) {
+
+						value = (Rin * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR0.setText("");
+					textfieldR0.setText( String.valueOf( value ) );
+					updateR0();
+				} else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz :(");
+				
 			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("01")) { 
 
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
+					if ( R0 * 2 > 15 ) {
+
+						value = (R0 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR1.setText("");
-					textfieldR1.setText( String.valueOf( R0 * 2 ) );
+					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
 				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) {
 
-					textfieldR1.setText("");
-					textfieldR1.setText( String.valueOf( R1 * 2 ) );
-					updateR1();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+					if ( R1 * 2 > 15 ) {
 
+						value = (R1 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR1.setText("");
-					textfieldR1.setText( String.valueOf( R2 * 2 ) );
+					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
-				} else {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
-				}
+					if ( R2 * 2 > 15 ) {
+
+						value = (R2 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR1.setText("");
+					textfieldR1.setText( String.valueOf( value ) );
+					updateR1();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
+					
+					
+					textfieldOutr.setText("");
+					if ( Rin * 2 > 15 ) {
+
+						value = (Rin * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR1.setText("");
+					textfieldR1.setText( String.valueOf( value ) );
+					updateR1();
+				} else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz :(");
+				
 			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("10")) {
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
+					if ( R0 * 2 > 15 ) {
+
+						value = (R0 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR2.setText("");
-					textfieldR2.setText( String.valueOf( R0 * 2 ) );
+					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
 				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) {
 
-					textfieldR2.setText("");
-					textfieldR2.setText( String.valueOf( R1 * 2 ) );
-					updateR2();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+					if ( R1 * 2 > 15 ) {
 
+						value = (R1 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
 					textfieldR2.setText("");
-					textfieldR2.setText( String.valueOf( R2 * 2 ) );
+					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
-				} else {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
-				}
+					if ( R2 * 2 > 15 ) {
+
+						value = (R2 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR2.setText("");
+					textfieldR2.setText( String.valueOf( value ) );
+					updateR2();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
+					
+					
+					textfieldOutr.setText("");
+					if ( Rin * 2 > 15 ) {
+
+						value = (Rin * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldR2.setText("");
+					textfieldR2.setText( String.valueOf( value ) );
+					updateR2();
+				} else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz :(");
+				
+			} else if (tableDecimalInstruction[ butterfly ][2] == 3) {
+				
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) { // == 0 (R0)
+
+					textfieldOutr.setText("");
+					if ( R0 * 2 > 15 ) {
+
+						value = (R0 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( value ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 1 && R1 != -1) { // == 1 (R1)
+
+					textfieldOutr.setText("");
+					if ( R1 * 2 > 15 ) {
+
+						value = (R1 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( value ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 2 && R2 != -1) { // == 2 (R2)
+
+					textfieldOutr.setText("");
+					if ( R2 * 2> 15 ) {
+
+						value = (R2 * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( value ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
+					
+					
+					textfieldOutr.setText("");
+					if ( Rin * 2 > 15 ) {
+
+						value = (Rin * 2) % 16;
+						textfieldOverflow.setText("1");
+					}
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( value ) );
+					updateOutr();
+				} else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz :(");
+			}
+			else {
+				
+				System.out.println("DBL işleminde, böyle bir registerı seçemezsin");
 			}
 
 			isNextLine = true;
@@ -1111,11 +1411,13 @@ public class Screen {
 
 			if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
 			// it will return integer according to clicked button. (hexa, binary, decimal)
-			System.out.println("R0:" + textfieldR0.getText() + " R1 " + textfieldR1.getText() + " R2:" + textfieldR2.getText());
+
+			if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText());
+			// it will return integer according to clicked button. (hexa, binary, decimal)
 
 			if (tableInstruction[ butterfly ][2].equalsIgnoreCase("00")) {
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( R0 / 2 ) );
@@ -1125,19 +1427,21 @@ public class Screen {
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( R1 / 2 ) );
 					updateR0();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( R2 / 2 ) );
 					updateR0();
-				} else {
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
+					textfieldR0.setText("");
+					textfieldR0.setText( String.valueOf( R2 / 2 ) );
+					updateR0();
 				}
-			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("01")) { 
+			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("01")) {
 
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( R0 / 2 ) );
@@ -1147,18 +1451,20 @@ public class Screen {
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( R1 / 2 ) );
 					updateR1();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( R2 / 2 ) );
 					updateR1();
-				} else {
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
+					textfieldR1.setText("");
+					textfieldR1.setText( String.valueOf( R2 / 2 ) );
+					updateR1();
 				}
 			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("10")) {
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( R0 / 2 ) );
@@ -1168,15 +1474,46 @@ public class Screen {
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( R1 / 2 ) );
 					updateR2();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( R2 / 2 ) );
 					updateR2();
-				} else {
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
+					textfieldR2.setText("");
+					textfieldR2.setText( String.valueOf( R2 / 2 ) );
+					updateR2();
 				}
+				else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz :(");
+			} else if (tableDecimalInstruction[ butterfly ][2] == 3) {
+				
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
+
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( R0 / 2 ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 1 && R1 != -1) {
+
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( R1 / 2 ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 2 && R2 != -1) {
+
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( R2 / 2 ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
+
+					textfieldOutr.setText("");
+					textfieldOutr.setText( String.valueOf( R2 / 2 ) );
+					updateOutr();
+				}
+				else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz :(");
+			}
+			else {
+				
+				System.out.println("DBL işleminde, böyle bir registerı seçemezsin");
 			}
 
 			isNextLine = true;
@@ -1193,9 +1530,9 @@ public class Screen {
 			if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
 			// it will return integer according to clicked button. (hexa, binary, decimal)
 
-			if (tableInstruction[ butterfly ][2].equalsIgnoreCase("00")) {
+			if (tableDecimalInstruction[ butterfly ][2] == 0) {
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
 					textfieldR0.setText("");
 					System.out.println("sasasa : " + String.valueOf( R0 * (-1) ));
@@ -1207,7 +1544,7 @@ public class Screen {
 					textfieldR0.setText("");
 					textfieldR0.setText( "E" + String.valueOf( R1 ) );
 					updateR0();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
 					textfieldR0.setText("");
 					textfieldR0.setText( "E" + String.valueOf( R2 ) );
@@ -1216,10 +1553,10 @@ public class Screen {
 
 					System.out.println("Boş beleş bir register seçmişsiniz :(");
 				}
-			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("01")) { 
+			} else if (tableDecimalInstruction[ butterfly ][2] == 1) {
 
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
 					textfieldR1.setText("");
 					textfieldR1.setText( "E" + String.valueOf( R0 ) );
@@ -1229,7 +1566,7 @@ public class Screen {
 					textfieldR1.setText("");
 					textfieldR1.setText( "E" + String.valueOf( R1 ) );
 					updateR1();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
 					textfieldR1.setText("");
 					textfieldR1.setText( "E" + String.valueOf( R2 ) );
@@ -1238,9 +1575,9 @@ public class Screen {
 
 					System.out.println("Boş beleş bir register seçmişsiniz :(");
 				}
-			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("10")) {
+			} else if (tableDecimalInstruction[ butterfly ][2] == 2) {
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) {
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
 					textfieldR2.setText("");
 					textfieldR2.setText( "E" + String.valueOf( R0 ) );
@@ -1250,15 +1587,40 @@ public class Screen {
 					textfieldR2.setText("");
 					textfieldR2.setText( "E" + String.valueOf( R1 ) );
 					updateR2();
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) {
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
 					textfieldR2.setText("");
 					textfieldR2.setText( "E" + String.valueOf( R2 ) );
 					updateR2();
-				} else {
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && R2 != -1) {
+					
+					textfieldR2.setText("");
+					textfieldR2.setText( "E" + String.valueOf( Rin ) );
+					updateR2();
+				} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+			} else if (tableDecimalInstruction[ butterfly ][2] == 3) {
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
-				}
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
+
+					textfieldOutr.setText("");
+					textfieldOutr.setText( "E" + String.valueOf( R0 ) );
+					updateOutr();
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) {
+
+					textfieldOutr.setText("");
+					textfieldOutr.setText( "E" + String.valueOf( R1 ) );
+					updateOutr();
+				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
+
+					textfieldOutr.setText("");
+					textfieldOutr.setText( "E" + String.valueOf( R2 ) );
+					updateOutr();
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && R2 != -1) {
+					
+					textfieldOutr.setText("");
+					textfieldOutr.setText( "E" + String.valueOf( Rin ) );
+					updateOutr();
+				} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 			}
 
 			isNextLine = true;
@@ -1273,203 +1635,409 @@ public class Screen {
 
 			if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
 			// it will return integer according to clicked button. (hexa, binary, decimal)
+			
+			if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText()); 
+			// it will return integer according to clicked button. (hexa, binary, decimal)
+			
 
-			if (tableInstruction[ butterfly ][2].equalsIgnoreCase("00")) { // D == R2
+			if (tableDecimalInstruction[ butterfly ][2] == 0) { // D == R2
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) { // D == R0 && S1 == R0
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) { // D == R0 && S1 == R0
 
-					if (tableInstruction[ butterfly ][4].equalsIgnoreCase("00") && R0 != -1) { // D == R0 && S1 == R0 && S2 == R0 ise
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R0 && S1 == R0 && S2 == R0 ise
 
 						textfieldR0.setText("");
 						textfieldR0.setText( String.valueOf( R0 & R0 ) );
 						updateR0();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("01") && R1 != -1) { // D == R0 && S1 == R0 && S2 == R1 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R0 && S1 == R0 && S2 == R1 ise
 
 						textfieldR0.setText("");
 						textfieldR0.setText( String.valueOf( R0 & R1 ) );
 						updateR0();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("10") && R2 != -2) { // D == R0 && S1 == R0 && S2 == R2 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R0 && S1 == R0 && S2 == R2 ise
 
 						textfieldR0.setText("");
 						textfieldR0.setText( String.valueOf( R0 & R2 ) );
 						updateR0();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
+
+						textfieldR0.setText("");
+						textfieldR0.setText( String.valueOf( R0 & Rin ) );
+						updateR0();
 					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) { // D == R0 && S1 == R1
+				} else if (tableDecimalInstruction[ butterfly ][3] == 1 && R1 != -1) { // D == R0 && S1 == R1
 
 
-					if (tableInstruction[ butterfly ][4].equalsIgnoreCase("00") && R0 != -1) { // D == R0 && S1 == R1 && S2 == R0 ise
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R0 && S1 == R1 && S2 == R0 ise
 
 						textfieldR0.setText("");
 						textfieldR0.setText( String.valueOf( R1 & R0 ) );
 						updateR0();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("01") && R1 != -1) { // D == R0 && S1 == R1 && S2 == R1 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R0 && S1 == R1 && S2 == R1 ise
 
 						textfieldR0.setText("");
 						textfieldR0.setText( String.valueOf( R1 & R1 ) );
 						updateR0();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("10") && R2 != -2) { // D == R0 && S1 == R1 && S2 == R2 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R0 && S1 == R1 && S2 == R2 ise
 
 						textfieldR0.setText("");
 						textfieldR0.setText( String.valueOf( R1 & R2 ) );
 						updateR0();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
+
+						textfieldR0.setText("");
+						textfieldR0.setText( String.valueOf( R1 & Rin ) );
+						updateR0();
 					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 
 
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) { // D == R0 && S1 == R2
+				} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R0 && S1 == R2
 
-					if (tableInstruction[ butterfly ][4].equalsIgnoreCase("00") && R0 != -1) { // D == R0 && S1 == R2 && S2 == R0
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R0 && S1 == R2 && S2 == R0
 
 						textfieldR0.setText("");
 						textfieldR0.setText( String.valueOf( R2 & R0 ) );
 						updateR0();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("01") && R1 != -1) { // D == R0 && S1 == R2 && S2 == R1
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R0 && S1 == R2 && S2 == R1
 
 						textfieldR0.setText("");
 						textfieldR0.setText( String.valueOf( R2 & R1 ) );
 						updateR0();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("10") && R2 != -2) { // D == R0 && S1 == R2 && S2 == R2
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R0 && S1 == R2 && S2 == R2
 
 						textfieldR0.setText("");
 						textfieldR0.setText( String.valueOf( R2 & R2 ) );
 						updateR0();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
+
+						textfieldR0.setText("");
+						textfieldR0.setText( String.valueOf( R2 & Rin ) );
+						updateR0();
 					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 
-				} else {
+				} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == Rin
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
-				}
-			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("01")) {
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R0 && S1 == Rin && S2 == R0
+
+						textfieldR0.setText("");
+						textfieldR0.setText( String.valueOf( Rin & R0 ) );
+						updateR0();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R0 && S1 == Rin && S2 == R1
+
+						textfieldR0.setText("");
+						textfieldR0.setText( String.valueOf( Rin & R1 ) );
+						updateR0();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R0 && S1 == Rin && S2 == R2
+
+						textfieldR0.setText("");
+						textfieldR0.setText( String.valueOf( Rin & R2 ) );
+						updateR0();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == Rin && S2 == R2
+
+						textfieldR0.setText("");
+						textfieldR0.setText( String.valueOf( Rin & Rin ) );
+						updateR0();
+					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+
+				} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+				
+			} else if (tableDecimalInstruction[ butterfly ][2] == 1) {
 
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) { // D == R0 && S1 == R0
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) { // D == R0 && S1 == R0
 
-					if (tableInstruction[ butterfly ][4].equalsIgnoreCase("00") && R0 != -1) { // D == R0 && S1 == R0 && S2 == R0 ise
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R0 && S1 == R0 && S2 == R0 ise
 
 						textfieldR1.setText("");
 						textfieldR1.setText( String.valueOf( R0 & R0 ) );
 						updateR1();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("01") && R1 != -1) { // D == R0 && S1 == R0 && S2 == R1 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R0 && S1 == R0 && S2 == R1 ise
 
 						textfieldR1.setText("");
 						textfieldR1.setText( String.valueOf( R0 & R1 ) );
 						updateR1();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("10") && R2 != -2) { // D == R0 && S1 == R0 && S2 == R2 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R0 && S1 == R0 && S2 == R2 ise
 
 						textfieldR1.setText("");
 						textfieldR1.setText( String.valueOf( R0 & R2 ) );
 						updateR1();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
+
+						textfieldR1.setText("");
+						textfieldR1.setText( String.valueOf( R0 & Rin ) );
+						updateR1();
 					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) { // D == R1 && S1 == R1
+				} else if (tableDecimalInstruction[ butterfly ][3] == 1 && R1 != -1) { // D == R1 && S1 == R1
 
 
-					if (tableInstruction[ butterfly ][4].equalsIgnoreCase("00") && R0 != -1) { // D == R1 && S1 == R1 && S2 == R0 ise
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R1 && S1 == R1 && S2 == R0 ise
 
 						textfieldR1.setText("");
 						textfieldR1.setText( String.valueOf( R1 & R0 ) );
 						updateR1();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("01") && R1 != -1) { // D == R1 && S1 == R1 && S2 == R1 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R1 && S1 == R1 && S2 == R1 ise
 
 						textfieldR1.setText("");
 						textfieldR1.setText( String.valueOf( R1 & R1 ) );
 						updateR1();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("10") && R2 != -2) { // D == R1 && S1 == R1 && S2 == R2 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R1 && S1 == R1 && S2 == R2 ise
 
 						textfieldR1.setText("");
 						textfieldR1.setText( String.valueOf( R1 & R2 ) );
 						updateR1();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
+
+						textfieldR1.setText("");
+						textfieldR1.setText( String.valueOf( R1 & Rin ) );
+						updateR1();
 					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 
 
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) { // D == R1 && S1 == R2
+				} else if (tableDecimalInstruction[ butterfly ][3] == 2 && R2 != -1) { // D == R1 && S1 == R2
 
-					if (tableInstruction[ butterfly ][4].equalsIgnoreCase("00") && R0 != -1) { // D == R1 && S1 == R2 && S2 == R0
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R1 && S1 == R2 && S2 == R0
 
 						textfieldR1.setText("");
 						textfieldR1.setText( String.valueOf( R2 & R0 ) );
 						updateR1();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("01") && R1 != -1) { // D == R1 && S1 == R2 && S2 == R1
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R1 && S1 == R2 && S2 == R1
 
 						textfieldR1.setText("");
 						textfieldR1.setText( String.valueOf( R2 & R1 ) );
 						updateR1();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("10") && R2 != -2) { // D == R1 && S1 == R2 && S2 == R2
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R1 && S1 == R2 && S2 == R2
 
 						textfieldR1.setText("");
 						textfieldR1.setText( String.valueOf( R2 & R2 ) );
 						updateR1();
-					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
 
-				} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+						textfieldR1.setText("");
+						textfieldR1.setText( String.valueOf( R2 & Rin ) );
+						updateR1();
+					} else System.out.println("S2' yi, boş beleş bir register seçmişsiniz :(");
 
-			} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("10")) {
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) { // D == R1 && S1 == R2
+
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R1 && S1 == R2 && S2 == R0
+
+						textfieldR1.setText("");
+						textfieldR1.setText( String.valueOf( Rin & R0 ) );
+						updateR1();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R1 && S1 == R2 && S2 == R1
+
+						textfieldR1.setText("");
+						textfieldR1.setText( String.valueOf( Rin & R1 ) );
+						updateR1();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R1 && S1 == R2 && S2 == R2
+
+						textfieldR1.setText("");
+						textfieldR1.setText( String.valueOf( Rin & R2 ) );
+						updateR1();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
+
+						textfieldR1.setText("");
+						textfieldR1.setText( String.valueOf( Rin & Rin ) );
+						updateR1();
+					} else System.out.println("S2' yi, boş beleş bir register seçmişsiniz :(");
+
+				} else System.out.println("S1' i, boş beleş bir register seçmişsiniz :(");
+
+			} else if (tableDecimalInstruction[ butterfly ][2] == 2) {
 
 
-				if (tableInstruction[ butterfly ][3].equalsIgnoreCase("00") && R0 != -1) { // D == R2 && S1 == R0
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) { // D == R2 && S1 == R0
 
-					if (tableInstruction[ butterfly ][4].equalsIgnoreCase("00") && R0 != -1) { // D == R2 && S1 == R0 && S2 == R0 ise
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R0 && S2 == R0 ise
 
 						textfieldR2.setText("");
 						textfieldR2.setText( String.valueOf( R0 & R0 ) );
 						updateR2();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("01") && R1 != -1) { // D == R2 && S1 == R0 && S2 == R1 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R2 && S1 == R0 && S2 == R1 ise
 
 						textfieldR2.setText("");
 						textfieldR2.setText( String.valueOf( R0 & R1 ) );
 						updateR2();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("10") && R2 != -2) { // D == R2 && S1 == R0 && S2 == R2 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R2 && S1 == R0 && S2 == R2 ise
 
 						textfieldR2.setText("");
 						textfieldR2.setText( String.valueOf( R0 & R2 ) );
 						updateR2();
-					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
 
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("01") && R1 != -1) { // D == R2 && S1 == R1
+						textfieldR2.setText("");
+						textfieldR2.setText( String.valueOf( R0 & Rin ) );
+						updateR2();
+					} else System.out.println("S2' yi, boş beleş bir register seçmişsiniz :(");
+
+				} else if (tableDecimalInstruction[ butterfly ][3] == 1 && R1 != -1) { // D == R2 && S1 == R1
 
 
-					if (tableInstruction[ butterfly ][4].equalsIgnoreCase("00") && R0 != -1) { // D == R2 && S1 == R1 && S2 == R0 ise
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R1 && S2 == R0 ise
 
 						textfieldR2.setText("");
 						textfieldR2.setText( String.valueOf( R1 & R0 ) );
 						updateR2();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("01") && R1 != -1) { // D == R2 && S1 == R1 && S2 == R1 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R2 && S1 == R1 && S2 == R1 ise
 
 						textfieldR2.setText("");
 						textfieldR2.setText( String.valueOf( R1 & R1 ) );
 						updateR2();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("10") && R2 != -2) { // D == R2 && S1 == R1 && S2 == R2 ise
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R2 && S1 == R1 && S2 == R2 ise
 
 						textfieldR2.setText("");
 						textfieldR2.setText( String.valueOf( R1 & R2 ) );
 						updateR2();
-					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
+
+						textfieldR2.setText("");
+						textfieldR2.setText( String.valueOf( R1 & Rin ) );
+						updateR2();
+					} else System.out.println("S2' yi, boş beleş bir register seçmişsiniz :(");
 
 
-				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -2) { // D == R2 && S1 == R2
+				} else if (tableDecimalInstruction[ butterfly ][3] == 2 && R2 != -1) { // D == R2 && S1 == R2
 
-					if (tableInstruction[ butterfly ][4].equalsIgnoreCase("00") && R0 != -1) { // D == R2 && S1 == R2 && S2 == R0
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R2 && S2 == R0
 
 						textfieldR2.setText("");
 						textfieldR2.setText( String.valueOf( R2 & R0 ) );
 						updateR2();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("01") && R1 != -1) { // D == R2 && S1 == R2 && S2 == R1
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R2 && S1 == R2 && S2 == R1
 
 						textfieldR2.setText("");
 						textfieldR2.setText( String.valueOf( R2 & R1 ) );
 						updateR2();
-					} else if (tableInstruction[ butterfly ][4].equalsIgnoreCase("10") && R2 != -2) { // D == R2 && S1 == R2 && S2 == R2
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R2 && S1 == R2 && S2 == R2
 
 						textfieldR2.setText("");
 						textfieldR2.setText( String.valueOf( R2 & R2 ) );
 						updateR2();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
+
+						textfieldR2.setText("");
+						textfieldR2.setText( String.valueOf( R2 & Rin ) );
+						updateR2();
+					} else System.out.println("S2' yi, boş beleş bir register seçmişsiniz :(");
+
+				} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) { // D == R2 && S1 == R2
+
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R2 && S2 == R0
+
+						textfieldR2.setText("");
+						textfieldR2.setText( String.valueOf( R2 & R0 ) );
+						updateR2();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R2 && S1 == R2 && S2 == R1
+
+						textfieldR2.setText("");
+						textfieldR2.setText( String.valueOf( R2 & R1 ) );
+						updateR2();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R2 && S1 == R2 && S2 == R2
+
+						textfieldR2.setText("");
+						textfieldR2.setText( String.valueOf( R2 & R2 ) );
+						updateR2();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R0 && S1 == R2 && S2 == R2
+
+						textfieldR2.setText("");
+						textfieldR2.setText( String.valueOf( R2 & Rin ) );
+						updateR2();
+					} else System.out.println("S2' yi, boş beleş bir register seçmişsiniz :(");
+
+				} else System.out.println("S1, i, boş beleş bir register seçmişsiniz :(");
+			} else if (tableDecimalInstruction[ butterfly ][2] == 3) {
+				
+				
+				if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) { // D == R2 && S1 == R0
+
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R0 && S2 == R0 ise
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R0 & R0 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R2 && S1 == R0 && S2 == R1 ise
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R0 & R1 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R2 && S1 == R0 && S2 == R2 ise
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R0 & R2 ) );
+						updateOutr();
 					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 
-				} else {
+				} else if (tableDecimalInstruction[ butterfly ][3] == 1 && R1 != -1) { // D == R2 && S1 == R1
 
-					System.out.println("Boş beleş bir register seçmişsiniz :(");
-				}
 
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R1 && S2 == R0 ise
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R1 & R0 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R2 && S1 == R1 && S2 == R1 ise
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R1 & R1 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R2 && S1 == R1 && S2 == R2 ise
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R1 & R2 ) );
+						updateOutr();
+					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+
+
+				} else if (tableDecimalInstruction[ butterfly ][3] == 2 && R2 != -1) { // D == R2 && S1 == R2
+
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R2 && S2 == R0
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R2 & R0 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R2 && S1 == R2 && S2 == R1
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R2 & R1 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R2 && S1 == R2 && S2 == R2
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R2 & R2 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R2 && S1 == R2 && S2 == Rin
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( R2 & Rin ) );
+						updateOutr();
+					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+					
+				}  else if (tableDecimalInstruction[ butterfly ][3] == 3 && R2 != -1) { // D == R2 && S1 == R2
+
+					if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R2 && S2 == R0
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( Rin & R0 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 1 && R1 != -1) { // D == R2 && S1 == R2 && S2 == R1
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( Rin & R1 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 2 && R2 != -1) { // D == R2 && S1 == R2 && S2 == R2
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( Rin & R2 ) );
+						updateOutr();
+					} else if (tableDecimalInstruction[ butterfly ][4] == 3 && Rin != -1) { // D == R2 && S1 == R2 && S2 == Rin
+
+						textfieldOutr.setText("");
+						textfieldOutr.setText( String.valueOf( Rin & Rin ) );
+						updateOutr();
+					} else System.out.println("Boş beleş bir register seçmişsiniz :(");
+				} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 			} else System.out.println("Böyle bir register yok ki yazasın üstüne bir şeyler");
 
 			isNextLine = true;
@@ -1720,7 +2288,6 @@ public class Screen {
 
 	}
 
-
 	public int[] determineS1 () { // IT WILL BE RETURN LINE FOR THE CURRENT OPERATION ACCORDING TO ARRAY AND THE VALUE OF 'S1'
 
 
@@ -1745,15 +2312,14 @@ public class Screen {
 		case 1: // IF S1 EQUALS '01'
 
 			lineAndcase[1] = 1;
-
-
 			break;
 		case 2: // IF S1 EQUALS '10'
 
 			lineAndcase[1] = 2;
-
 			break;
-
+		case 3: // IF S1 EQUALS '11' (INPR)
+			lineAndcase[1] = 3;
+			break;
 		default: // THERE IS NOT REGISTER EXCEPT 00-01-10-11
 			System.out.println("Değeri olmayan bir register seçtiniz");
 			break;
@@ -1765,7 +2331,7 @@ public class Screen {
 	public void writeIntoRegister () {
 
 
-		int case0, whichCase, R0Value = 0, R1Value = 0, R2Value = 0;
+		int case0, whichCase, R0Value = -1, R1Value = -1, R2Value = -1, RinValue = -1;
 		boolean isEverythingOkay = true;
 		case0 = determineS1()[0];
 		whichCase = determineS1()[1];
@@ -1774,21 +2340,17 @@ public class Screen {
 		R0Value = getInteger(textfieldR0.getText());// it will return integer according to clicked button. (hexa, binary, decimal)
 		R1Value = getInteger(textfieldR1.getText());// it will return integer according to clicked button. (hexa, binary, decimal)
 		R2Value = getInteger(textfieldR2.getText()); // it will return integer according to clicked button. (hexa, binary, decimal)
+		RinValue = getInteger(textfieldInpr.getText()); // it will return integer according to clicked button. (hexa, binary, decimal)
 
-
-		if (R0Value == -1 || R1Value == -1 || R2Value == -2) isEverythingOkay = false;
-
-
-		System.out.println(textfieldR1.getText());
-		System.out.println("0 : " + R0Value + " 1 : " + R1Value + " 2 : " + R2Value);
+		System.out.println("0 : " + R0Value + " 1 : " + R1Value + " 2 : " + R2Value + " 3 : " + RinValue);
 
 		if (isEverythingOkay) { // NE ICIN BUNU KOYDUGUNU HATIRLA LUTFEN :(  (SU AN HATIRLAMIYORUM :D)
 
 			int value = 0; // REGISTERA YAZILACAK DEGER
-			
+
 			if (tableDecimalInstruction[ case0 ][2] == 0) { // IF THE VALUE OF D IS EQUALS '00'
 
-				
+
 				// ALLAHSEN FONKSİYONA AL.
 
 				switch (tableDecimalInstruction[ case0 ][4]) { // I KNOW THE VALUE OF "S1" AND "D", SO SWITCH-CASE FOR THE VALUE OF "S2"
@@ -1823,6 +2385,15 @@ public class Screen {
 						}
 						textfieldR0.setText(String.valueOf(value));
 					}
+					else if (whichCase == 3) {
+
+						if (R0Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R0Value) % 16;
+						}
+						textfieldR0.setText(String.valueOf(value));
+					}
 					updateR0();
 					break;
 				case 1: // IF S2 EQUALS '01'
@@ -1851,6 +2422,15 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R1Value) % 16;
+						}
+						textfieldR0.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (R1Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R1Value) % 16;
 						}
 						textfieldR0.setText(String.valueOf(value));
 					}
@@ -1885,9 +2465,57 @@ public class Screen {
 						}
 						textfieldR0.setText(String.valueOf(value));
 					}
+					else if (whichCase == 3) {
+
+						if (R2Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R2Value) % 16;
+						}
+						textfieldR0.setText(String.valueOf(value));
+					}
 					updateR0();
 					break;
+				case 3: // IF S2 EQUALS '10'
+					textfieldR0.setText(" ");
+					if (whichCase == 0) {
 
+						if (R0Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R0Value + RinValue) % 16;
+						}
+						textfieldR0.setText(String.valueOf(value));
+					}
+					else if (whichCase == 1) {
+
+						if (R1Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R1Value + RinValue) % 16;
+						}
+						textfieldR0.setText(String.valueOf(value));
+					}
+					else if (whichCase == 2) {
+
+						if (R2Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R2Value + RinValue) % 16;
+						}
+						textfieldR0.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (RinValue + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + RinValue) % 16;
+						}
+						textfieldR0.setText(String.valueOf(value));
+					}
+					updateR0();
+					break;
 				default: // THERE IS NOT REGISTER EXCEPT 00-01-10-11
 					System.out.println("Add işleminde yanlış Register galiba");
 					break;
@@ -1897,7 +2525,7 @@ public class Screen {
 
 
 				switch (tableDecimalInstruction[ case0 ][4]) {  // I KNOW THE VALUE OF "S1" AND "D", SO SWITCH-CASE FOR THE VALUE OF "S2"
-				
+
 				///////////////////
 				case 0: // IF S2 EQUALS '00'
 					textfieldR1.setText(" ");
@@ -1929,6 +2557,15 @@ public class Screen {
 						}
 						textfieldR1.setText(String.valueOf(value));
 					}
+					else if (whichCase == 3) {
+
+						if (R0Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R0Value) % 16;
+						}
+						textfieldR1.setText(String.valueOf(value));
+					}
 					updateR1();
 					break;
 				case 1: // IF S2 EQUALS '01'
@@ -1957,6 +2594,15 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R1Value) % 16;
+						}
+						textfieldR1.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (R1Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R1Value) % 16;
 						}
 						textfieldR1.setText(String.valueOf(value));
 					}
@@ -1991,6 +2637,55 @@ public class Screen {
 						}
 						textfieldR1.setText(String.valueOf(value));
 					}
+					else if (whichCase == 3) {
+
+						if (R2Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R2Value) % 16;
+						}
+						textfieldR1.setText(String.valueOf(value));
+					}
+					updateR1();
+					break;
+				case 3: // IF S2 EQUALS '10'
+					textfieldR1.setText(" ");
+					if (whichCase == 0) {
+
+						if (RinValue + R0Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R0Value) % 16;
+						}
+						textfieldR1.setText(String.valueOf(value));
+					}
+					else if (whichCase == 1) {
+
+						if (RinValue + R1Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R1Value) % 16;
+						}
+						textfieldR1.setText(String.valueOf(value));
+					}
+					else if (whichCase == 2) {
+
+						if (RinValue + R2Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R2Value) % 16;
+						}
+						textfieldR1.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (RinValue + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + RinValue) % 16;
+						}
+						textfieldR1.setText(String.valueOf(value));
+					}
 					updateR1();
 					break;
 				default:
@@ -2003,7 +2698,7 @@ public class Screen {
 			} else if (tableDecimalInstruction[ case0 ][2] == 2) { // IF THE VALUE OF D IS EQUALS '10'
 
 				switch (tableDecimalInstruction[ case0 ][4]) {  // I KNOW THE VALUE OF "S1" AND "D", SO SWITCH-CASE FOR THE VALUE OF "S2"
-				
+
 				case 0: // IF S2 EQUALS '00'
 					textfieldR2.setText(" ");
 
@@ -2034,6 +2729,15 @@ public class Screen {
 						}
 						textfieldR2.setText(String.valueOf(value));
 					}
+					else if (whichCase == 3) {
+
+						if (R0Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R0Value) % 16;
+						}
+						textfieldR2.setText(String.valueOf(value));
+					}
 					updateR2();
 					break;
 				case 1: // IF S2 EQUALS '01'
@@ -2062,6 +2766,15 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R1Value) % 16;
+						}
+						textfieldR2.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (R1Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R1Value) % 16;
 						}
 						textfieldR2.setText(String.valueOf(value));
 					}
@@ -2096,7 +2809,225 @@ public class Screen {
 						}
 						textfieldR2.setText(String.valueOf(value));
 					}
+					else if (whichCase == 3) {
+
+						if (R2Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + R2Value) % 16;
+						}
+						textfieldR2.setText(String.valueOf(value));
+					}
 					updateR2();
+					break;
+				case 3: // IF S2 EQUALS '10'
+					textfieldR2.setText(" ");
+					if (whichCase == 0) {
+
+						if (R0Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R0Value + RinValue) % 16;
+						}
+						textfieldR2.setText(String.valueOf(value));
+					}
+					else if (whichCase == 1) {
+
+						if (R1Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R1Value + RinValue) % 16;
+						}
+						textfieldR2.setText(String.valueOf(value));
+					}
+					else if (whichCase == 2) {
+
+						if (R2Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R2Value + RinValue) % 16;
+						}
+						textfieldR2.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (RinValue + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + RinValue) % 16;
+						}
+						textfieldR2.setText(String.valueOf(value));
+					}
+					updateR2();
+					break;
+				default:
+					System.out.println("Add işleminde yanlış Register galiba");
+					break;
+				}
+			} else if (tableDecimalInstruction[ case0 ][2] == 3) { // IF THE VALUE OF D IS EQUALS '11' (SO OUTPUT REGISTER)
+
+				switch (tableDecimalInstruction[ case0 ][4]) {  // I KNOW THE VALUE OF "S1" AND "D", SO SWITCH-CASE FOR THE VALUE OF "S2"
+
+				case 0: // IF S2 EQUALS '00'
+					textfieldOutr.setText(" ");
+
+					if (whichCase == 0) {
+
+						if (R0Value + R0Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R0Value + R0Value) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 1) {
+
+						if (R0Value + R1Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R1Value + R0Value) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 2) {
+
+						if (R0Value + R2Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R2Value + R0Value) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (R0Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R0Value + RinValue) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					updateOutr();
+					break;
+				case 1: // IF S2 EQUALS '01'
+					textfieldOutr.setText(" ");
+					if (whichCase == 0) {
+
+						if (R0Value + R1Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R0Value + R1Value) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 1) {
+
+						if (R1Value + R1Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R1Value + R1Value) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 2) {
+
+						if (R2Value + R1Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R2Value + R1Value) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (R1Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R1Value + RinValue) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					updateOutr();
+					break;
+				case 2: // IF S2 EQUALS '10'
+					textfieldOutr.setText(" ");
+					if (whichCase == 0) {
+
+						if (R0Value + R2Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R0Value + R2Value) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 1) {
+
+						if (R1Value + R2Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R1Value + R2Value) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 2) {
+
+						if (R2Value + R2Value > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R2Value + R2Value) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (R2Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R2Value + RinValue) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					updateOutr();
+					break;
+				case 3: // IF S2 EQUALS '10'
+					textfieldOutr.setText(" ");
+					if (whichCase == 0) {
+
+						if (R0Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R0Value + RinValue) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 1) {
+
+						if (R1Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R1Value + RinValue) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 2) {
+
+						if (R2Value + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (R2Value + RinValue) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					else if (whichCase == 3) {
+
+						if (RinValue + RinValue > 15) {
+
+							textfieldOverflow.setText("1");
+							value = (RinValue + RinValue) % 16;
+						}
+						textfieldOutr.setText(String.valueOf(value));
+					}
+					updateOutr();
 					break;
 				default:
 					System.out.println("Add işleminde yanlış Register galiba");
@@ -2261,6 +3192,7 @@ public class Screen {
 
 		return str;
 	}
+
 	void readFile(String FileName) { // Read file and print same.
 
 		BufferedReader reader = null;

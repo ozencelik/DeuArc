@@ -115,10 +115,12 @@ public class Parsing {
 
 							
 							while ((butterflyLine = butterflyReader.readLine()) != null) {
-
-								if (butterflyLine.equalsIgnoreCase("END")) break;
-
+								
+								
+								if (butterflyLine.trim().equalsIgnoreCase("END")) break;
+								
 								String[] str = butterflyLine.trim().split(":");
+								
 								if (str.length == 2) {
 
 									String butterfly = str[0];
@@ -170,7 +172,7 @@ public class Parsing {
 					boolean exist = false;
 					line = line.replace("\t", " "); // Replace all tabs with 1 space.
 					line = line.replace("\\s+", " "); // Replace all space with one space.
-					splitSpace = line.split(" ");
+					splitSpace = line.trim().split(" ");
 
 
 					if (splitSpace.length > 1 || splitSpace[0].trim().equalsIgnoreCase("HLT")) {
@@ -414,7 +416,6 @@ public class Parsing {
 	}
 	
 	private void Cal (String[] str, int line,File f) {
-
 
 
 		if (str.length > 1) {

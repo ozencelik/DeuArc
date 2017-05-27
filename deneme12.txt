@@ -1,0 +1,14 @@
+		ORG C 10
+		LD R0,@A		%Load the number A
+		ST	R2,@RES		%Store result to RES
+		INC R1,R0			%Increment Register1 to find 2's complement
+		CAL SUB			%Call subroutine SUB
+		ADD R2,R0,R1	%operate R0+(-R1), then store to R2
+SUB:	NOT R1			%1's complement of Register1
+		INC R1			%Increment Register1 to find 2's complement
+		ADD R2,R0,R1	%operate R0+(-R1), then store to R2
+		RET				%Return to main program
+		ORG D 3
+A: 		HEX 3
+RES:	BIN 0000
+		END
