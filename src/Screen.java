@@ -779,9 +779,8 @@ public class Screen {
 	}
  
 	public void T3(int[][] arr, int i) {
-
 		switch (arr[i][1]) {
-
+		
 		case 0: // ADD
 
 			int R0Value = 0, R1Value = 0, R2Value = 0;
