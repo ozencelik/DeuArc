@@ -64,6 +64,7 @@ public class Screen {
 
 	private int[][] tableDecimalStack;
 	private String[][] tableStack;
+	private int counterTableStack = 0;
 
 	private int[][] tableDecimalLabel;
 	private String[][] tableLabel;
@@ -100,8 +101,8 @@ public class Screen {
 		tableData = new String[16][3];
 		// tableData[2][2] = "cabbar";
 
-		tableStack = new String[16][5];
-		tableDecimalStack = new int[16][5];
+		tableStack = new String[16][2];
+		tableDecimalStack = new int[16][2];
 		// tableStack[2][1] = "val";
 
 		tableLabel = new String[16][4];
@@ -725,7 +726,9 @@ public class Screen {
 									// Register.
 					break;
 				case 5:
-
+					
+					T5(selection);
+					
 					break;
 				default:
 					break;
@@ -779,8 +782,10 @@ public class Screen {
 	}
  
 	public void T3(int[][] arr, int i) {
-		switch (arr[i][1]) {
 		
+		int case0 = Integer.parseInt(textfieldAddr.getText());
+		
+		switch (arr[i][1]) {
 		case 0: // ADD
 
 			int R0Value = 0, R1Value = 0, R2Value = 0;
@@ -793,7 +798,7 @@ public class Screen {
 			isNextLine = true;
 			howInvisible = 3;
 
-			int case0 = Integer.parseInt(textfieldAddr.getText());
+			
 
 			switch (tableDecimalInstruction[case0][3]) {
 
@@ -1104,20 +1109,17 @@ public class Screen {
 			isNextLine = true;
 			break;
 		case 14: // PSH
-
-			isNextLine = true;
+			
+			textfieldT3.setText("AR <- IR[3..0]");
+			textfieldT3.setVisible(true);
+			labelT3.setVisible(true);
+			
 			break;
 		case 15: // POP
 			
 			textfieldT3.setText("AR <- IR[3..0]");
 			textfieldT3.setVisible(true);
 			labelT3.setVisible(true);
-			
-			textfieldAddr.setText(t);
-			
-			
-			
-			
 			
 			break;
 		default:
@@ -1126,7 +1128,9 @@ public class Screen {
 	}
 
 	public void T4(int i) {
-
+		
+		int butterfly = Integer.parseInt(textfieldPc.getText()) - 1;
+		
 		switch (i) {
 
 		case 6: // LD
@@ -1135,7 +1139,7 @@ public class Screen {
 			textfieldT4.setVisible(true);
 			labelT4.setVisible(true);
 
-			int butterfly = Integer.parseInt(textfieldPc.getText()) - 1;
+			
 
 			if (tableInstruction[butterfly][2].equalsIgnoreCase("00")) {
 
@@ -1185,13 +1189,60 @@ public class Screen {
 			break;
 		case 14: // PSH
 
+			int but = Integer.parseInt(textfieldAddr.getText());
+			
+			textfieldT4.setText("SM[SP] <- DM[AR]");
+			textfieldT4.setVisible(true);
+			labelT4.setVisible(true);
+			
+			tableStack[counterTableStack][1] = tableData[but][1];
+			
 			break;
 		case 15: // POP
+			
+			textfieldT4.setText("SP <- SP-1");
+			textfieldT4.setVisible(true);
+			labelT4.setVisible(true);
+			
+			counterTableStack--;
 
 			break;
 		default:
 			break;
 		}
+	}
+	
+	public void T5(int i) {
+		
+		int butterfly = Integer.parseInt(textfieldAddr.getText());
+		
+		switch (i) {
+		
+		case 14: // PSH
+
+			textfieldT5.setText("SP <- SP+1");
+			textfieldT5.setVisible(true);
+			labelT5.setVisible(true);
+		
+			counterTableStack++;
+
+			isNextLine = true;
+			break;
+		case 15: // POP
+			
+			textfieldT5.setText("DM[AR] <- SM[SP]");
+			textfieldT5.setVisible(true);
+			labelT5.setVisible(true);
+		
+			
+			tableData[butterfly][1] = tableStack[counterTableStack][1];
+
+			isNextLine = true;
+			break;
+		default:
+			break;
+		}
+		
 	}
 
 	public void fillLabelArrayFromData(String[][] str) {
