@@ -309,7 +309,7 @@ public class Screen {
 
 		} else {
 
-			int butterfly = Integer.parseInt(textfieldR2.getText());
+			int butterfly = Integer.parseInt(String.valueOf(textfieldR2.getText()));
 			textfieldR2.setText(" ");
 			if (isHexa) {
 
@@ -2289,9 +2289,7 @@ public class Screen {
 	}
 
 	public int[] determineS1 () { // IT WILL BE RETURN LINE FOR THE CURRENT OPERATION ACCORDING TO ARRAY AND THE VALUE OF 'S1'
-
-
-
+		
 		// IMPORTANT AREA
 
 		// lineAndcase[0] = case0 (means which line will be change in instructionArray, like Program Counter)
@@ -2336,6 +2334,7 @@ public class Screen {
 		case0 = determineS1()[0];
 		whichCase = determineS1()[1];
 
+		System.out.println("WHICHCASE : " + whichCase);
 
 		R0Value = getInteger(textfieldR0.getText());// it will return integer according to clicked button. (hexa, binary, decimal)
 		R1Value = getInteger(textfieldR1.getText());// it will return integer according to clicked button. (hexa, binary, decimal)
