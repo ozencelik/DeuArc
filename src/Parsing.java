@@ -49,6 +49,8 @@ public class Parsing {
 		fillTableWithMinus9();
 
 		parseCode(str);
+		
+		System.out.println("for debug");
 
 		//		for (int i = 0; i < codeMemory.length; i++) {
 		//			
@@ -914,7 +916,7 @@ public class Parsing {
 				codeMemory[line][1] = String.valueOf(Integer.parseInt(str[0]));
 			}
 			else{//"JMP MUL"
-
+				
 			}
 		}
 		else if(str.length == 2){// "JMP 23 V"

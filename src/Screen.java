@@ -457,7 +457,7 @@ public class Screen {
 
 							String butterMıFly = Integer.toBinaryString(arr[i][4]);
 							butterfly[i][3] = "0" + butterMıFly.substring(0,1);
-							butterfly[i][4] = butterMıFly.substring(2);
+							butterfly[i][4] = butterMıFly.substring(1);
 						} else if (arr[i][4] < 16) {
 							String butterMıFly = Integer.toBinaryString(arr[i][4]);
 							butterfly[i][3] = butterMıFly.substring(0, 2);
