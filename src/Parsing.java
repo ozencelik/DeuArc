@@ -692,6 +692,7 @@ public class Parsing {
 		}
 	}
 
+	
 	private void Load (String[] str, int line) {
 
 		if (str.length == 2) {
@@ -755,38 +756,47 @@ public class Parsing {
 				instructionDecimal[line][4] = butterfly; // decimali s1s2 diye bölmeden attým.
 			}
 			 */
-
-
-			if (str[0].equalsIgnoreCase("R0")) instructionDecimal[line][2] = 0;
-			else if (str[0].equalsIgnoreCase("R1")) instructionDecimal[line][2] = 1;
-			else if (str[0].equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
-			else if (str[0].equalsIgnoreCase("INPR")) instructionDecimal[line][2] = 3;
-
 			if (str[1].substring(0, 1).equals("@")) {
-
-				instructionDecimal[line][0] = 0; // Q = 0;
+				
+				instructionDecimal[line][0] = 0; // Q = 0;Address varrr
 				instructionDecimal[line][1] = 7;
+				
+				if (str[0].equalsIgnoreCase("R0")) instructionDecimal[line][2] = 0;
+				else if (str[0].equalsIgnoreCase("R1")) instructionDecimal[line][2] = 1;
+				else if (str[0].equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
+				else if (str[0].equalsIgnoreCase("INPR")) instructionDecimal[line][2] = 3;
+			
 
 				int butterfly = 0;
 				if ((butterfly = whereisData(dataDecimal,16, str[1].substring(1), 0, true)) != -1) {
 					instructionDecimal[line][3] = 0; // 0 attým, çünkü decimal, binary çevirirken içini güncellicem.
-					instructionDecimal[line][4] = Integer.parseInt(dataDecimal[butterfly][1]); // decimali s1s2 diye bölmeden attým.
+					instructionDecimal[line][4] = butterfly;//Integer.parseInt(dataDecimal[butterfly][1]); // decimali s1s2 diye bölmeden attým.
 				}
 				else if(isNumber(str[1].substring(1)) && (butterfly = whereisData(dataDecimal,16, str[1].substring(1), Integer.parseInt(str[1].substring(1)), false)) != -1){
 					System.out.println("bakkkkkkkkkkkkkkkkkkkkkkkk : "+Integer.parseInt(str[1].substring(1))+" line  : "+line);
 					instructionDecimal[line][3] = 0; // 0 attým, çünkü decimal, binary çevirirken içini güncellicem.
-					instructionDecimal[line][4] = Integer.parseInt(dataDecimal[butterfly][1]); // decimali s1s2 diye bölmeden attým
+					instructionDecimal[line][4] = butterfly;//Integer.parseInt(dataDecimal[butterfly][1]); // decimali s1s2 diye bölmeden attým
 				}
 				else {
 					System.out.println(str[1].substring(1) + " diye bir deðer yok.");
 				}
-			} else if (str[1].substring(0, 1).equals("#")) {
-
-
-				instructionDecimal[line][0] = 1; // Q = 1;
+			} 
+			else{//iki tarafında register olma durumu.EXAMPLE : "ST INPR,OUTR"
+				
+				instructionDecimal[line][0] = 1; // Q = 1;Address li birşeyler yok.
 				instructionDecimal[line][1] = 7;
-				instructionDecimal[line][3] = 0;
-				instructionDecimal[line][4] = Integer.parseInt(str[1].substring(1));
+				
+				if (str[0].equalsIgnoreCase("R0")) instructionDecimal[line][2] = 0;
+				else if (str[0].equalsIgnoreCase("R1")) instructionDecimal[line][2] = 1;
+				else if (str[0].equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
+				else if (str[0].equalsIgnoreCase("INPR")) instructionDecimal[line][2] = 3;
+				
+				if (str[1].equalsIgnoreCase("R0")) instructionDecimal[line][3] = 0;
+				else if (str[1].equalsIgnoreCase("R1")) instructionDecimal[line][3] = 1;
+				else if (str[1].equalsIgnoreCase("R2")) instructionDecimal[line][3] = 2;
+				else if (str[1].equalsIgnoreCase("OUTR")) instructionDecimal[line][3] = 3;
+				
+				instructionDecimal[line][4] = 0;
 			}
 		}
 
@@ -795,7 +805,6 @@ public class Parsing {
 	private void Transfer(String[] str, int line){// (EXAMPLE) - "TSF OUTR,INPR"
 
 		if(str.length > 1){
-
 			instructionDecimal[line][0] = 0; // Q = 0;
 			instructionDecimal[line][1] = 9;
 
@@ -817,6 +826,7 @@ public class Parsing {
 
 	}
 
+	
 	private void Cal (String[] str, int line,File f) {
 
 		if (str.length > 1) {

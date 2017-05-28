@@ -1,19 +1,11 @@
 ORG C 3
-
-
 LD R1,@B
-
 LD R0,@M
-
 INC R1
 ADD OUTR,INPR,R0
-
-ST R2,#9
-
-DBL R1,R2
-
+ST INPR,@A
+DBL R0,R1
 DBT R2,R0
-
 CAL SUB			%Call subroutine SUB
 ST	R2,@RES		%Store result to RES
 HLT
@@ -25,14 +17,9 @@ LOL:AND R2,R1,R0			%1's complement of Register1
 INC R1,R2
 
 ORG D 3
-
 A: DEC 7
-
 B: DEC 3
-
 C: DEC 8
-
 S: HEX F
-
 RES:	BIN 0000
 M: DEC 10
