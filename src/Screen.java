@@ -1033,7 +1033,10 @@ public class Screen {
 				textfieldT3.setText(" AR <- S1S2");
 				textfieldT3.setVisible(true);
 				labelT3.setVisible(true);
-				textfieldAddr.setText(tableInstruction[ butterfly ][3] + tableInstruction[ butterfly ][4]);
+				
+				//textfieldAddr.setText(tableInstruction[ butterfly ][3] + tableInstruction[ butterfly ][4]);
+				textfieldAddr.setText(""+butterfly);
+				
 			}
 			else { // Q == 1 ( #directInteger ) Integer value equals S1S2.
 
@@ -1073,8 +1076,8 @@ public class Screen {
 				textfieldT3.setText(" AR <- S1S2");
 				textfieldT3.setVisible(true);
 				labelT3.setVisible(true);
-				textfieldAddr.setText(tableInstruction[ butterfly ][3] + tableInstruction[ butterfly ][4]);
-
+				
+				textfieldAddr.setText(""+butterfly);
 			}
 			else { 
 
@@ -1310,7 +1313,7 @@ public class Screen {
 		return lineAndcase;
 	}
 
-	public void writeIntoRegister () {
+	public void writeIntoRegister () {//For ADD function
 
 
 		int case0, whichCase, R0Value = -1, R1Value = -1, R2Value = -1, RinValue = -1;
@@ -3182,6 +3185,64 @@ public class Screen {
 		}
 		////////////////////////////////////
 	}
+
+	public boolean writeIntoData(String[][]arr,int ara,int data){//arr = tableData, ara=q, data = yazacagım değer
+		
+		boolean isOkay = false;
+		int size = arr.length;
+		int q;
+		for (q = 0; q < size; q++) {
+
+			if ((q == ara) && (arr[q][0] != null || arr[q][0].equalsIgnoreCase(" "))) { // [][1] de
+				isOkay = true;
+				arr[q][1] = String.valueOf(data);
+				
+				System.out.println("ARRR MIII :"+arr[q][0]+"  "+arr[q][1]+"  "+arr[q][2]);
+				break;
+			}
+		}
+		return isOkay;
+		
+	}
+	
+	public void stT4(){//Q = 0;
+	
+		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
+		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
+		int value = 0;
+		
+		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
+		// it will return integer according to clicked button. (hexa, binary, decimal)
+
+		if (textfieldR1.getText().length() > 0) R1 = getInteger(textfieldR1.getText()); 
+		// it will return integer according to clicked button. (hexa, binary, decimal)
+
+		if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
+		// it will return integer according to clicked button. (hexa, binary, decimal)
+
+		if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText());
+		// it will return integer according to clicked button. (hexa, binary, decimal)
+		
+		/////////////////////////////////////
+		if (tableDecimalInstruction[ butterfly ][2] == 0 && R0 != -1) { // D == R0
+
+			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], R0))
+					System.out.println("Data Table a değer yazılamadı...St T4 teyim");
+			
+		} else if (tableDecimalInstruction[ butterfly ][2] == 1 && R1 != -1) {
+			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], R1))
+				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
+		
+		}else if (tableDecimalInstruction[ butterfly ][2] == 2 && R2 != -1) {
+			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], R2))
+				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
+			
+		}
+		else if (tableDecimalInstruction[ butterfly ][2] == 3 && Rin != -1) {
+			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], Rin))
+				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
+		}
+	}
 	
 	public void fillLabelArrayFromData (String[][] str) {
 
@@ -3210,6 +3271,7 @@ public class Screen {
 			}
 		}
 	}
+	
 	private void textBeInvisible(int i) { // i equals the last operation
 
 		if (i == 3) {
@@ -3341,63 +3403,6 @@ public class Screen {
 		fileWriter.close();
 	}
 
-	public boolean writeIntoData(String[][]arr,int ara,int data){//arr = tableData, ara=q, data = yazacagım değer
-		
-		boolean isOkay = false;
-		int size = arr.length;
-		int q;
-		for (q = 0; q < size; q++) {
-
-			if ((q == ara) && (arr[q][0] != null || arr[q][0].equalsIgnoreCase(" "))) { // [][1] de
-				isOkay = true;
-				arr[q][1] = String.valueOf(data);
-				
-				System.out.println("ARRR MIII :"+arr[q][0]+"  "+arr[q][1]+"  "+arr[q][2]);
-				break;
-			}
-		}
-		return isOkay;
-		
-	}
-	
-	public void stT4(){//Q = 0;
-	
-		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
-		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
-		int value = 0;
-		
-		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
-		// it will return integer according to clicked button. (hexa, binary, decimal)
-
-		if (textfieldR1.getText().length() > 0) R1 = getInteger(textfieldR1.getText()); 
-		// it will return integer according to clicked button. (hexa, binary, decimal)
-
-		if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
-		// it will return integer according to clicked button. (hexa, binary, decimal)
-
-		if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText());
-		// it will return integer according to clicked button. (hexa, binary, decimal)
-		
-		/////////////////////////////////////
-		if (tableDecimalInstruction[ butterfly ][2] == 0 && R0 != -1) { // D == R0
-
-			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], R0))
-					System.out.println("Data Table a değer yazılamadı...St T4 teyim");
-			
-		} else if (tableDecimalInstruction[ butterfly ][2] == 1 && R1 != -1) {
-			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], R1))
-				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
-		
-		}else if (tableDecimalInstruction[ butterfly ][2] == 2 && R2 != -1) {
-			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], R2))
-				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
-			
-		}
-		else if (tableDecimalInstruction[ butterfly ][2] == 3 && Rin != -1) {
-			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], Rin))
-				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
-		}
-	}
 	
 	
 	private String fillZeros(String str, int wordLength){
