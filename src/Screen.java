@@ -1205,6 +1205,9 @@ public class Screen {
 
 			if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
 			// it will return integer according to clicked button. (hexa, binary, decimal)
+			
+			if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText()); 
+			// it will return integer according to clicked button. (hexa, binary, decimal)
 
 			if (tableInstruction[ butterfly ][2].equalsIgnoreCase("00")) {
 
@@ -1214,7 +1217,7 @@ public class Screen {
 
 						value = (R0 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R0 * 2;
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
@@ -1224,7 +1227,7 @@ public class Screen {
 
 						value = (R1 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R1 * 2;
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
@@ -1234,7 +1237,7 @@ public class Screen {
 
 						value = (R2 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R2 * 2;
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
@@ -1246,7 +1249,7 @@ public class Screen {
 
 						value = (Rin * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = Rin * 2;
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
@@ -1261,7 +1264,7 @@ public class Screen {
 
 						value = (R0 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R0 * 2;
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
@@ -1271,7 +1274,7 @@ public class Screen {
 
 						value = (R1 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R1 * 2;
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
@@ -1281,7 +1284,7 @@ public class Screen {
 
 						value = (R2 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R2 * 2;
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
@@ -1293,7 +1296,7 @@ public class Screen {
 
 						value = (Rin * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = Rin * 2;
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
@@ -1307,7 +1310,7 @@ public class Screen {
 
 						value = (R0 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R0 * 2;
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
@@ -1317,7 +1320,7 @@ public class Screen {
 
 						value = (R1 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R1 * 2;
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
@@ -1327,7 +1330,7 @@ public class Screen {
 
 						value = (R2 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R2 * 2;
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
@@ -1339,7 +1342,7 @@ public class Screen {
 
 						value = (Rin * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = Rin * 2;
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
@@ -1354,7 +1357,7 @@ public class Screen {
 
 						value = (R0 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R0 * 2;
 					textfieldOutr.setText("");
 					textfieldOutr.setText( String.valueOf( value ) );
 					updateOutr();
@@ -1365,7 +1368,7 @@ public class Screen {
 
 						value = (R1 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R1 * 2;
 					textfieldOutr.setText("");
 					textfieldOutr.setText( String.valueOf( value ) );
 					updateOutr();
@@ -1376,7 +1379,7 @@ public class Screen {
 
 						value = (R2 * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R2 * 2;
 					textfieldOutr.setText("");
 					textfieldOutr.setText( String.valueOf( value ) );
 					updateOutr();
@@ -1388,7 +1391,7 @@ public class Screen {
 
 						value = (Rin * 2) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = Rin * 2;
 					textfieldOutr.setText("");
 					textfieldOutr.setText( String.valueOf( value ) );
 					updateOutr();
@@ -2364,7 +2367,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R0Value) % 16;
-						}
+						} else value = R0Value + R0Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2373,7 +2376,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R0Value) % 16;
-						}
+						} else value = R1Value + R0Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2382,7 +2385,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R0Value) % 16;
-						}
+						} else value = R2Value + R0Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2391,7 +2394,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R0Value) % 16;
-						}
+						} else value = RinValue + R0Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					updateR0();
@@ -2404,7 +2407,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R1Value) % 16;
-						}
+						} else value = R0Value + R1Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2413,7 +2416,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R1Value) % 16;
-						}
+						} else value = R1Value + R1Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2422,7 +2425,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R1Value) % 16;
-						}
+						} else value = R2Value + R1Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2431,7 +2434,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R1Value) % 16;
-						}
+						} else value = RinValue + R1Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					updateR0();
@@ -2444,7 +2447,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R2Value) % 16;
-						}
+						} else value = R0Value + R2Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2462,7 +2465,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R2Value) % 16;
-						}
+						} else value = R2Value + R2Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2471,7 +2474,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R2Value) % 16;
-						}
+						} else value = RinValue + R2Value;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					updateR0();
@@ -2484,7 +2487,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + RinValue) % 16;
-						}
+						} else value = R0Value + RinValue;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2493,16 +2496,16 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + RinValue) % 16;
-						}
+						} else value = R1Value + RinValue;
 						textfieldR0.setText(String.valueOf(value));
-					}
+					} 
 					else if (whichCase == 2) {
 
 						if (R2Value + RinValue > 15) {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + RinValue) % 16;
-						}
+						} else value = R2Value + RinValue;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2511,7 +2514,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + RinValue) % 16;
-						}
+						} else value = RinValue + RinValue;
 						textfieldR0.setText(String.valueOf(value));
 					}
 					updateR0();
@@ -2536,7 +2539,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R0Value) % 16;
-						}
+						} else value = R0Value + R0Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2545,7 +2548,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R0Value) % 16;
-						}
+						} else value = R1Value + R0Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2554,7 +2557,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R0Value) % 16;
-						}
+						} else value = R2Value + R0Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2563,7 +2566,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R0Value) % 16;
-						}
+						} else value = RinValue + R0Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					updateR1();
@@ -2576,7 +2579,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R1Value) % 16;
-						}
+						} else value = R0Value + R1Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2585,7 +2588,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R1Value) % 16;
-						}
+						} else value = R1Value + R1Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2594,7 +2597,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R1Value) % 16;
-						}
+						} else value = R2Value + R1Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2603,7 +2606,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R1Value) % 16;
-						}
+						} else value = RinValue + R1Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					updateR1();
@@ -2616,7 +2619,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R2Value) % 16;
-						}
+						} else value = R0Value + R2Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2625,7 +2628,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R2Value) % 16;
-						}
+						} else value = R1Value + R2Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2634,7 +2637,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R2Value) % 16;
-						}
+						} else value = R2Value + R2Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2643,7 +2646,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R2Value) % 16;
-						}
+						} else value = RinValue + R2Value;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					updateR1();
@@ -2656,7 +2659,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R0Value) % 16;
-						}
+						} else value = R0Value + RinValue;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2665,7 +2668,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R1Value) % 16;
-						}
+						}else value = R1Value + RinValue;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2674,7 +2677,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R2Value) % 16;
-						}
+						}else value = R2Value + RinValue;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2683,7 +2686,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + RinValue) % 16;
-						}
+						}else value = RinValue + RinValue;
 						textfieldR1.setText(String.valueOf(value));
 					}
 					updateR1();
@@ -2708,7 +2711,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R0Value) % 16;
-						}
+						} else value = R0Value + R0Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2717,7 +2720,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R0Value) % 16;
-						}
+						} else value = R1Value + R0Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2726,7 +2729,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R0Value) % 16;
-						}
+						} else value = R2Value + R0Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2735,7 +2738,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R0Value) % 16;
-						}
+						} else value = RinValue + R0Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					updateR2();
@@ -2748,7 +2751,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R1Value) % 16;
-						}
+						} else value = R0Value + R1Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2757,7 +2760,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R1Value) % 16;
-						}
+						} else value = R1Value + R1Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2766,7 +2769,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R1Value) % 16;
-						}
+						} else value = R2Value + R1Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2775,7 +2778,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R1Value) % 16;
-						}
+						} else value = RinValue + R1Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					updateR2();
@@ -2788,7 +2791,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R2Value) % 16;
-						}
+						} else value = R0Value + R2Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2797,7 +2800,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R2Value) % 16;
-						}
+						} else value = R1Value + R2Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2806,7 +2809,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R2Value) % 16;
-						}
+						} else value = R2Value + R2Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2815,7 +2818,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + R2Value) % 16;
-						}
+						} else value = RinValue + R2Value;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					updateR2();
@@ -2828,7 +2831,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + RinValue) % 16;
-						}
+						} else value = R0Value + RinValue;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2837,7 +2840,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + RinValue) % 16;
-						}
+						} else value = R1Value + RinValue;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2846,7 +2849,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + RinValue) % 16;
-						}
+						} else value = R2Value + RinValue;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2855,7 +2858,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + RinValue) % 16;
-						}
+						} else value = RinValue + RinValue;
 						textfieldR2.setText(String.valueOf(value));
 					}
 					updateR2();
@@ -2877,7 +2880,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R0Value) % 16;
-						}
+						} else value = R0Value + R0Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2886,7 +2889,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R0Value) % 16;
-						}
+						} else value = R1Value + R0Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2895,7 +2898,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R0Value) % 16;
-						}
+						} else value = R2Value + R0Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2904,7 +2907,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + RinValue) % 16;
-						}
+						} else value = RinValue + R0Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					updateOutr();
@@ -2917,7 +2920,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R1Value) % 16;
-						}
+						} else value = R0Value + R1Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2926,7 +2929,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R1Value) % 16;
-						}
+						} else value = R1Value + R1Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2935,7 +2938,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R1Value) % 16;
-						}
+						} else value = R2Value + R1Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2944,7 +2947,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + RinValue) % 16;
-						}
+						} else value = RinValue + R1Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					updateOutr();
@@ -2957,7 +2960,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + R2Value) % 16;
-						}
+						} else value = R0Value + R2Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -2966,7 +2969,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + R2Value) % 16;
-						}
+						} else value = R1Value + R2Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -2975,7 +2978,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + R2Value) % 16;
-						}
+						} else value = R2Value + R2Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -2984,7 +2987,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + RinValue) % 16;
-						}
+						} else value = RinValue + R2Value;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					updateOutr();
@@ -2997,7 +3000,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R0Value + RinValue) % 16;
-						}
+						} else value = R0Value + RinValue;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 1) {
@@ -3006,7 +3009,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R1Value + RinValue) % 16;
-						}
+						} else value = R1Value + RinValue;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 2) {
@@ -3015,7 +3018,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (R2Value + RinValue) % 16;
-						}
+						} else value = R2Value + RinValue;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					else if (whichCase == 3) {
@@ -3024,7 +3027,7 @@ public class Screen {
 
 							textfieldOverflow.setText("1");
 							value = (RinValue + RinValue) % 16;
-						}
+						} else value = RinValue + RinValue;
 						textfieldOutr.setText(String.valueOf(value));
 					}
 					updateOutr();
