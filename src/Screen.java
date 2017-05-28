@@ -68,6 +68,8 @@ public class Screen {
 
 	private int[][] tableDecimalLabel;
 	private String[][] tableLabel;
+	
+	private String[][] tableCodeMemory;
 
 	Parsing parse;
 
@@ -108,15 +110,19 @@ public class Screen {
 		tableLabel = new String[16][4];
 		tableDecimalLabel = new int[16][4];
 
+		tableCodeMemory = new String[32][2];
+		
 		parse = new Parsing("deneme1.txt");
 		tableDecimalInstruction = parse.getInstructionDecimal();
 		tableData = parse.getDataDecimal();
-
+		tableCodeMemory = parse.getCodeMemory();
+		
 		frame = Management.frame;
 		addContentsToFrame();
 		tableInstruction = toBinary(tableDecimalInstruction);
 
 		fillLabelArrayFromData(tableData);
+		fillLabelArrayFromcodeMem(tableCodeMemory);
 		fillTable();
 
 		// Reading a file
@@ -1006,7 +1012,7 @@ public class Screen {
 
 						value = (R0 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R0 +1;
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
@@ -1016,17 +1022,17 @@ public class Screen {
 
 						value = (R1 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R1 +1;
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( value ) );
-					updateR0();
+					updateR0(); 
 				} else if (tableInstruction[ butterfly ][3].equalsIgnoreCase("10") && R2 != -1) {
 
 					if ( R1 + 2 > 15 ) {
 
 						value = (R2 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R2 + 1;
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
@@ -1038,7 +1044,7 @@ public class Screen {
 
 						value = (Rin + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = Rin + 1;
 					textfieldR0.setText("");
 					textfieldR0.setText( String.valueOf( value ) );
 					updateR0();
@@ -1053,7 +1059,7 @@ public class Screen {
 
 						value = (R0 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R0 + 1;
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
@@ -1063,7 +1069,7 @@ public class Screen {
 
 						value = (R1 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R1 + 1;
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
@@ -1073,7 +1079,7 @@ public class Screen {
 
 						value = (R2 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R2 + 1;
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
@@ -1085,7 +1091,7 @@ public class Screen {
 
 						value = (Rin + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = Rin + 1;
 					textfieldR1.setText("");
 					textfieldR1.setText( String.valueOf( value ) );
 					updateR1();
@@ -1099,7 +1105,7 @@ public class Screen {
 
 						value = (R0 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R0 + 1;
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
@@ -1109,7 +1115,7 @@ public class Screen {
 
 						value = (R1 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R1 + 1;
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
@@ -1120,7 +1126,7 @@ public class Screen {
 
 						value = (R2 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R2 + 1;
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
@@ -1132,7 +1138,7 @@ public class Screen {
 
 						value = (Rin + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = Rin + 1;
 					textfieldR2.setText("");
 					textfieldR2.setText( String.valueOf( value ) );
 					updateR2();
@@ -1148,7 +1154,7 @@ public class Screen {
 
 						value = (R0 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R0 + 1;
 					textfieldOutr.setText("");
 					textfieldOutr.setText( String.valueOf( value ) );
 					updateOutr();
@@ -1159,7 +1165,7 @@ public class Screen {
 
 						value = (R1 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R1 + 1;
 					textfieldOutr.setText("");
 					textfieldOutr.setText( String.valueOf( value ) );
 					updateOutr();
@@ -1170,7 +1176,7 @@ public class Screen {
 
 						value = (R2 + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = R2 + 1;
 					textfieldOutr.setText("");
 					textfieldOutr.setText( String.valueOf( value ) );
 					updateOutr();
@@ -1182,7 +1188,7 @@ public class Screen {
 
 						value = (Rin + 1) % 16;
 						textfieldOverflow.setText("1");
-					}
+					} else value = Rin + 1;
 					textfieldOutr.setText("");
 					textfieldOutr.setText( String.valueOf( value ) );
 					updateOutr();
@@ -2141,10 +2147,25 @@ public class Screen {
 			break;
 		case 10: // CAL
 
-
+			int SP = stackMemory.getCounter();
+			System.out.println("SP : " + SP);
+			stackDtm.setValueAt(instructionMemory.getCounter(), SP, 1);
+			tableStack[SP][0] = String.valueOf(instructionMemory.getCounter());
+			stackMemory.increaseCounter();
+			
+			instructionMemory.setCounter(Integer.parseInt(tableLabel[6][2]));
+			System.out.println("PC : " + tableStack[SP][0]);
+			isNextLine = true;
 			break;
 		case 11: // RET
 
+			
+			stackMemory.setCounter(stackMemory.getCounter() - 1);
+			int SP2 = stackMemory.getCounter();
+			stackDtm.setValueAt(-1, SP2, 1);
+			instructionMemory.setCounter(Integer.parseInt(tableStack[SP2][0]));
+			System.out.println("PC : " + tableStack[SP2][0]);
+//			instructionMemory.setCounter(counter);
 			isNextLine = true;
 			break;
 		case 12: // JMP
@@ -3054,6 +3075,19 @@ public class Screen {
 		}
 	}
 
+	public void fillLabelArrayFromcodeMem (String[][] str) {
+		
+		for (int i = 0; i < str.length; i++) {
+			
+			if (str[i][0] != null) {
+				
+				tableLabel[tableLabelCounter][1] = str[i][0];
+				tableLabel[tableLabelCounter][2] = str[i][1];
+				tableLabel[tableLabelCounter][3] = "CM";
+				tableLabelCounter++;
+			}
+		}
+	}
 	private void textBeInvisible(int i) { // i equals the last operation
 
 		if (i == 3) {

@@ -9,9 +9,10 @@ public class Parsing {
 
 	int[][] instructionDecimal, stackDecimal;
 	String[][] dataDecimal;
-	int letterCounter, dataCount, dataStart;
+	int letterCounter, dataCount, dataStart, cmCounter = 0;
 	char letter;
-	
+	boolean isOrgC = false; // if false, org in D
+
 	private String[][] codeMemory;//CAL, JMP gibi işlemler gideceğimiz yerin adını tutacak. 
 
 
@@ -44,10 +45,17 @@ public class Parsing {
 		dataDecimal = new String[16][3];
 
 		codeMemory = new String[32][2];
-		
+
 		fillTableWithMinus9();
 
 		parseCode(str);
+
+		//		for (int i = 0; i < codeMemory.length; i++) {
+		//			
+		//			if (codeMemory[i][0] != null)
+		//			System.out.println(i + " : " + codeMemory[i][0]);
+		//			System.out.println(i + " : " + codeMemory[i][1]);
+		//		}
 	}
 
 	public String[][] getCodeMemory() {
@@ -89,7 +97,7 @@ public class Parsing {
 			}
 			return (isOkay == true) ? q:-1;
 		}
-		
+
 	}
 
 	private void parseCode (String FileName) {
@@ -119,7 +127,7 @@ public class Parsing {
 				dataCount = 0;
 				dataStart = 0;
 				while ((butterflyLine = butterflyReader.readLine()) != null) {
-					
+
 					butterflyLine = butterflyLine.trim(); // BAYA IMPORTANT
 					dataArray = butterflyLine.split(" ");
 
@@ -130,7 +138,7 @@ public class Parsing {
 							dataStart = Integer.parseInt(dataArray[2]);
 							dataCount = Integer.parseInt(dataArray[2]);
 
-							
+
 							while ((butterflyLine = butterflyReader.readLine()) != null) {
 
 								if (butterflyLine.trim().equalsIgnoreCase("END")) break;
@@ -141,11 +149,11 @@ public class Parsing {
 									String butterfly = str[0];
 									str = str[1].trim().split(" "); // Again split operation according to space.
 
-									
+
 									if (str.length == 2) {
 
 										System.out.println("Parse ta str[1].split( )[0] : " + str[0] + " str[1].split( )[1] : " + str[1]);
-										
+
 										if (str[0].equalsIgnoreCase("HEX")) {
 
 											dataDecimal[ dataCount ][0] = butterfly;
@@ -182,30 +190,43 @@ public class Parsing {
 				}
 				int lineCounter = 0;
 				boolean isCodeFinish = false;
-				while ( (line = reader.readLine()) != null ) { // satýr satýr cebimizde.
+				while ( (line = reader.readLine()) != null) { // satýr satýr cebimizde.
 
 					boolean exist = false;
+					int w = 0;
+					int lenLine = line.length();
+					while (w + 1 < lenLine) {
+						
+						if (line.substring(w, w+1).equalsIgnoreCase("%")) {
+						
+							line = line.substring(0,w);
+							break;
+						}
+						w++;
+					}
 					line = line.replace("\t", " "); // Replace all tabs with 1 space.
 					line = line.replace("\\s+", " "); // Replace all space with one space.
 					splitSpace = line.trim().split(" ");
 
 
-					if (splitSpace.length > 1 || splitSpace[0].trim().equalsIgnoreCase("HLT")) {
+					if (splitSpace.length > 1 || splitSpace[0].trim().equalsIgnoreCase("HLT") || splitSpace[0].trim().equalsIgnoreCase("RET")) {
 
+						
 						if (splitSpace[0].trim().equalsIgnoreCase("HLT")) splitComma = null;
+						else if (splitSpace[0].trim().equalsIgnoreCase("RET")) splitComma = null;
 						else splitComma = splitSpace[1].split(",");
 
 						String selection;
 						if (line.split(":").length > 1) {
 
 							splitSpace[1] = splitSpace[1].replace("\t", " "); // Replace all tabs with 1 space.
-							splitSpace[1] = splitSpace[1].replace("\\s+", " "); // Replace all space with one space.
-							selection = splitSpace[1].trim();
+							splitSpace[1] = splitSpace[1].replace("( )+", " "); // Replace all space with one space.
+							selection = splitSpace[0].trim();
 						} else {
 
 							selection = splitSpace[0].trim();
 						}
-						switch(selection.toUpperCase()) {
+						switch(selection.trim().toUpperCase()) {
 
 						case "ORG":
 
@@ -214,11 +235,18 @@ public class Parsing {
 
 								if (splitSpace[1].trim().equalsIgnoreCase("C")) {
 
+									System.out.println("true oldumm");
+									isOrgC = true;
 									lineCounter = Integer.parseInt(splitSpace[2]) - 1;
 									//										instructionDecimal[lineCounter][0] = 0; // Q = 0 (default)
 									instructionDecimal[lineCounter][1] = -1; // -1 mean ORG
 									instructionDecimal[lineCounter][2] = 1; // 1 mean D
 									instructionDecimal[lineCounter][3] = Integer.parseInt(splitSpace[2]); // near integer of ORG D (int)
+								}
+								else if (splitSpace[1].trim().equalsIgnoreCase("D")) {
+									System.out.println("false oldummm  " + lineCounter);
+									isOrgC = false;
+									break;
 								}
 							}
 							break;
@@ -258,7 +286,7 @@ public class Parsing {
 
 							Load (splitComma, lineCounter); // lineCounter = According to ORG
 							break;
-						
+
 						case "ST": // STORAGE operation.
 
 							Storage (splitComma, lineCounter); // lineCounter = According to ORG
@@ -272,14 +300,14 @@ public class Parsing {
 							Cal (splitSpace, lineCounter, file); // lineCounter = According to ORG
 							break;
 						case "RET":
-							
+
 							Return(splitSpace, lineCounter);
-							
+
 							break;
 						case "JMP":
-							
+
 							Jump(splitSpace, lineCounter);
-							
+
 							break;
 						case "JMR":
 
@@ -291,6 +319,113 @@ public class Parsing {
 
 							break;
 						default:
+
+							if (isOrgC) {
+
+								String[] str = selection.trim().split(":");
+								if (str.length == 2) {
+									codeMemory[cmCounter][0] = str[0];
+									codeMemory[cmCounter][1] = String.valueOf(lineCounter);
+									cmCounter++;
+									
+									if (str[1].trim().length() > 1) {
+										
+										line = line.replace("\t", " "); // Replace all tabs with 1 space.
+										line = line.replaceAll("( )+", " "); // Replace all space with one space.
+										
+										// COK CIRKIN OLDU FARKINDAYIM AMA IDARE EDECEZ.
+										int i = 0;
+										int len = line.length();
+										while (i + 1 < len) {
+											
+											if (line.substring(i, i+1).equalsIgnoreCase("%")) {
+											
+												line = line.substring(0,i);
+												break;
+											}
+											i++;
+										}
+										System.out.println("işte bu : " + line);
+										String[] butter = line.trim().split(":");
+										if (butter.length > 0) {
+										
+											butter[1] = butter[1].replace("\t", " "); // Replace all tabs with 1 space.
+											butter[1] = butter[1].replace("( )+", " "); // Replace all space with one space.
+											splitSpace = butter[1].trim().split(" ");
+											if (splitSpace.length > 1) {
+												
+												splitComma = splitSpace[1].split(",");
+											}
+											System.out.println("len : " + splitComma.length);
+										}
+										
+										
+										switch (str[1].trim()) {
+										case "ADD": // ADD operation.
+
+											Add (splitComma, lineCounter); // lineCounter = According to ORG
+											break;
+										case "INC":
+
+											Inc (splitComma, lineCounter); // lineCounter = According to ORG
+											break;
+										case "DBL":
+
+											Dbl (splitComma, lineCounter); // lineCounter = According to ORG
+											break;
+										case "DBT":
+
+											Dbt (splitComma, lineCounter); // lineCounter = According to ORG
+											break;
+										case "NOT": // NOT OPERATION
+											
+											Not (splitComma, lineCounter); // lineCounter = According to ORG
+											break;
+										case "AND":
+
+											And (splitComma, lineCounter); // lineCounter = According to ORG
+											break;
+										case "LD": // LOAD operation.
+
+											Load (splitComma, lineCounter); // lineCounter = According to ORG
+											break;
+
+										case "ST": // STORAGE operation.
+
+											Storage (splitComma, lineCounter); // lineCounter = According to ORG
+											break;
+										case "TSF":
+											Transfer(splitComma, lineCounter); // lineCounter = According to ORG
+											break; 
+										case "CAL":
+
+											System.out.println("CAL'A giriyor.");
+											Cal (splitSpace, lineCounter, file); // lineCounter = According to ORG
+											break;
+										case "RET":
+
+											Return(splitSpace, lineCounter);
+
+											break;
+										case "JMP":
+
+											Jump(splitSpace, lineCounter);
+
+											break;
+										case "JMR":
+
+											break;
+										case "PSH":
+
+											break;
+										case "POP":
+
+											break;
+										}
+									}
+									
+								}
+							}
 						}
 						lineCounter++;
 					}
@@ -306,12 +441,12 @@ public class Parsing {
 	}
 
 	private void Add (String[] str, int line) { // (EXAMPLE) - "ADD R2,R0,R1"
-		
+
 		if (str.length == 3) {
 
 			if(str[0].equalsIgnoreCase("INPR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN ADD İŞLEMİİ !!!!");
 			if(str[1].equalsIgnoreCase("OUTR") || str[2].equalsIgnoreCase("OUTR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN ADD İŞLEMİİ !!!!");
-			
+
 			instructionDecimal[line][0] = -5; // Q = X - (DON'T CARE)
 			instructionDecimal[line][1] = 0;
 
@@ -319,7 +454,7 @@ public class Parsing {
 			else if (str[0].equalsIgnoreCase("R1")) instructionDecimal[line][2] = 1;
 			else if (str[0].equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
 			else if(str[0].equalsIgnoreCase("OUTR")) instructionDecimal[line][2] = 3;
-			
+
 			if (str[1].equalsIgnoreCase("R0")) instructionDecimal[line][3] = 0;
 			else if (str[1].equalsIgnoreCase("R1")) instructionDecimal[line][3] = 1;
 			else if (str[1].equalsIgnoreCase("R2")) instructionDecimal[line][3] = 2;
@@ -329,7 +464,7 @@ public class Parsing {
 			else if (str[2].equalsIgnoreCase("R1")) instructionDecimal[line][4] = 1;
 			else if (str[2].equalsIgnoreCase("R2")) instructionDecimal[line][4] = 2;
 			else if(str[2].equalsIgnoreCase("INPR")) instructionDecimal[line][4] = 3;
-		
+
 		}
 		else {
 
@@ -338,13 +473,13 @@ public class Parsing {
 	}
 
 	private void Inc (String[] str, int line) { // (EXAMPLE) - "INC R2,R0"
-		
+
 		if(str[0].equalsIgnoreCase("INPR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
-		
+
 		if (str.length > 1) {
-			
+
 			if(str[1].equalsIgnoreCase("OUTR") || str[1].equalsIgnoreCase("OUTR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
-			
+
 			instructionDecimal[line][0] = -5; // Q = X - (DON'T CARE)
 			instructionDecimal[line][1] = 1; // opCode = ..-0001-..
 
@@ -374,11 +509,11 @@ public class Parsing {
 				instructionDecimal[line][3] = 1;
 			}
 			else if (str[0].equalsIgnoreCase("R2")){
-				 instructionDecimal[line][2] = 2;
-				 instructionDecimal[line][3] = 2;
+				instructionDecimal[line][2] = 2;
+				instructionDecimal[line][3] = 2;
 			}     
 			else if(str[0].equalsIgnoreCase("OUTR")){
-				 System.out.println("SOURCE'A OUTR'Yİ VEREMEZSİNNNNNN !!!!");
+				System.out.println("SOURCE'A OUTR'Yİ VEREMEZSİNNNNNN !!!!");
 			}
 			instructionDecimal[line][4] = 0; // S2 - DON'T CARE = 0 (default)
 		}
@@ -386,12 +521,12 @@ public class Parsing {
 	}
 
 	private void Dbl (String[] str, int line) { // (EXAMPLE) - "DBL R0,R2"
-		
+
 		if(str[0].equalsIgnoreCase("INPR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
-		
+
 		if (str.length > 1) {
 			if(str[1].equalsIgnoreCase("OUTR") || str[1].equalsIgnoreCase("OUTR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
-			
+
 			instructionDecimal[line][0] = -5; // Q = X - (DON'T CARE)
 			instructionDecimal[line][1] = 2; // opCode = ..-0010-..
 
@@ -408,10 +543,10 @@ public class Parsing {
 			instructionDecimal[line][4] = 0; // S2 - DON'T CARE = 0 (default)
 		}
 		else if(str.length == 1){//Yani sadece bir tane şey girerse EXAMPLE : DBL OUTR
-			
+
 			instructionDecimal[line][0] = -5; // Q = X - (DON'T CARE)
 			instructionDecimal[line][1] = 2; // opCode = ..-0010-..
-			
+
 			if (str[0].equalsIgnoreCase("R0")){
 				instructionDecimal[line][2] = 0;
 				instructionDecimal[line][2] = 0;
@@ -436,10 +571,10 @@ public class Parsing {
 	private void Dbt (String[] str, int line) { // (EXAMPLE) - "DBT R2,R0"
 
 		if(str[0].equalsIgnoreCase("INPR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
-		
+
 		if (str.length > 1) {
 			if(str[1].equalsIgnoreCase("OUTR") || str[1].equalsIgnoreCase("OUTR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
-			
+
 			instructionDecimal[line][0] = -5; // Q = X - (DON'T CARE)
 			instructionDecimal[line][1] = 3; // opCode = ..-0010-..
 
@@ -456,10 +591,10 @@ public class Parsing {
 			instructionDecimal[line][4] = 0; // S2 - DON'T CARE = 0 (default)
 		}
 		else if(str.length == 1){//Yani sadece bir tane şey girerse EXAMPLE : DBL OUTR
-			
+
 			instructionDecimal[line][0] = -5; // Q = X - (DON'T CARE)
 			instructionDecimal[line][1] = 3; // opCode = ..-0010-..
-			
+
 			if (str[0].equalsIgnoreCase("R0")){
 				instructionDecimal[line][2] = 0;
 				instructionDecimal[line][2] = 0;
@@ -484,10 +619,10 @@ public class Parsing {
 	private void Not (String[] str, int line) { // (EXAMPLE) - "NOT R0,R2"
 
 		if(str[0].equalsIgnoreCase("INPR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
-		
+
 		if (str.length > 1) {
 			if(str[1].equalsIgnoreCase("OUTR") || str[1].equalsIgnoreCase("OUTR")) System.out.println("DESTINATION'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
-			
+
 			instructionDecimal[line][0] = -5; // Q = X - (DON'T CARE)
 			instructionDecimal[line][1] = 4; // opCode = ..-0010-..
 
@@ -503,34 +638,36 @@ public class Parsing {
 
 			instructionDecimal[line][4] = 0; // S2 - DON'T CARE = 0 (default)
 		}
-		else if(str.length == 1){//Yani sadece bir tane şey girerse EXAMPLE : DBL OUTR
-			
+		else if(str.length == 1){//Yani sadece bir tane şey girerse EXAMPLE : NOT R1
+
 			instructionDecimal[line][0] = -5; // Q = X - (DON'T CARE)
 			instructionDecimal[line][1] = 4; // opCode = ..-0010-..
-			
+
 			if (str[0].equalsIgnoreCase("R0")){
 				instructionDecimal[line][2] = 0;
-				instructionDecimal[line][2] = 0;
+				instructionDecimal[line][3] = 0;
 			}
 			else if (str[0].equalsIgnoreCase("R1")){
 				instructionDecimal[line][2] = 1;
-				instructionDecimal[line][2] = 1;
+				instructionDecimal[line][3] = 1;
 			}
 			else if (str[0].equalsIgnoreCase("R2")){
 				instructionDecimal[line][2] = 2;
-				instructionDecimal[line][2] = 2;
+				instructionDecimal[line][3] = 2;
 			}
 			else if (str[0].equalsIgnoreCase("OUTR")){
 				System.out.println("SOURCE'A OUTR'Yİ VEREMEZSİNNNNNN !!!!");
 			}
+			/* OZENC KANKA BUNE, USTTEKI ILE AYNI? BIRI YANLISTIR.
 			else if (str[0].equalsIgnoreCase("INPR")){
 				System.out.println("DESTINATION 'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
 			}
+			*/
 		}
 	}
 
 	private void And (String[] str, int line) { // (EXAMPLE) - "AND R1,R0,R2"
-		
+
 		if (str.length == 3) {
 			instructionDecimal[line][0] = -5; // Q = X - (DON'T CARE)
 			instructionDecimal[line][1] = 5; // // opCode = ..-0101-..
@@ -554,19 +691,18 @@ public class Parsing {
 			System.out.println("Hangi registerý hangi registera atayým usta, toplamda 3 tane girecen..");
 		}
 	}
-	
-	
+
 	private void Load (String[] str, int line) {
 
 		if (str.length == 2) {
-			
+
 			if (str[0].trim().equalsIgnoreCase("R0")) instructionDecimal[line][2] = 0;
 			else if (str[0].trim().equalsIgnoreCase("R1")) instructionDecimal[line][2] = 1;
 			else if (str[0].trim().equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
 			else if (str[0].trim().equalsIgnoreCase("OUTR")) instructionDecimal[line][2] = 3;
-			
+
 			if (str[1].substring(0, 1).equals("#")) {
-				
+
 				instructionDecimal[line][0] = 1; // Q = 1
 				instructionDecimal[line][1] = 6;
 
@@ -576,18 +712,18 @@ public class Parsing {
 				instructionDecimal[line][4] = butterfly; // decimali s1s2 diye bölmeden attým.
 			}
 			else if (str[1].substring(0, 1).equals("@")) {
-				
+
 				instructionDecimal[line][0] = 0; // Q = 0
 				instructionDecimal[line][1] = 6;
-				
+
 				int butterfly = 0;
 				if ((butterfly = whereisData(dataDecimal,16, str[1].substring(1), 0, true)) != -1) {
-					
+
 					instructionDecimal[line][3] = 0; // 0 attým, çünkü decimal, binary çevirirken içini güncellicem.
 					instructionDecimal[line][4] = Integer.parseInt(dataDecimal[butterfly][1]); // decimali s1s2 diye bölmeden attým.
 				}
 				else if (isNumber(str[1].substring(1)) &&(butterfly = whereisData(dataDecimal,16, str[1].substring(1), Integer.parseInt(str[1].substring(1)), false)) != -1) {
-					
+
 					instructionDecimal[line][3] = 0; // 0 attým, çünkü decimal, binary çevirirken içini güncellicem.
 					instructionDecimal[line][4] = Integer.parseInt(dataDecimal[butterfly][1]); // decimali s1s2 diye bölmeden attým.
 				}
@@ -601,12 +737,12 @@ public class Parsing {
 	private void Storage(String[] str, int line) {
 
 		if (str.length == 2) {
-				
+
 			//Burada işler biraz daha farklı
 			//Bana gelen destination u source a atıyorum
 			//Source u ise destinatinationa atıyorum.
 			//Biraz bak anlarsın :))
-			
+
 			/*
 			if (str[1].substring(0, 1).equals("#")) {
 				instructionDecimal[line][0] = 1; // Q = 1;
@@ -618,19 +754,19 @@ public class Parsing {
 				instructionDecimal[line][3] = 0; // 0 attým, çünkü decimal, binary çevirirken içini güncellicem.
 				instructionDecimal[line][4] = butterfly; // decimali s1s2 diye bölmeden attým.
 			}
-			*/
-		
-			
+			 */
+
+
 			if (str[0].equalsIgnoreCase("R0")) instructionDecimal[line][2] = 0;
 			else if (str[0].equalsIgnoreCase("R1")) instructionDecimal[line][2] = 1;
 			else if (str[0].equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
 			else if (str[0].equalsIgnoreCase("INPR")) instructionDecimal[line][2] = 3;
-			
+
 			if (str[1].substring(0, 1).equals("@")) {
-				
+
 				instructionDecimal[line][0] = 0; // Q = 0;
 				instructionDecimal[line][1] = 7;
-				
+
 				int butterfly = 0;
 				if ((butterfly = whereisData(dataDecimal,16, str[1].substring(1), 0, true)) != -1) {
 					instructionDecimal[line][3] = 0; // 0 attým, çünkü decimal, binary çevirirken içini güncellicem.
@@ -644,23 +780,30 @@ public class Parsing {
 				else {
 					System.out.println(str[1].substring(1) + " diye bir deðer yok.");
 				}
+			} else if (str[1].substring(0, 1).equals("#")) {
+
+
+				instructionDecimal[line][0] = 1; // Q = 1;
+				instructionDecimal[line][1] = 7;
+				instructionDecimal[line][3] = 0;
+				instructionDecimal[line][4] = Integer.parseInt(str[1].substring(1));
 			}
 		}
 
 	}
 
 	private void Transfer(String[] str, int line){// (EXAMPLE) - "TSF OUTR,INPR"
-		
+
 		if(str.length > 1){
-			
+
 			instructionDecimal[line][0] = 0; // Q = 0;
 			instructionDecimal[line][1] = 9;
-			
+
 			if (str[0].equalsIgnoreCase("R0")) instructionDecimal[line][2] = 0;
 			else if (str[0].equalsIgnoreCase("R1")) instructionDecimal[line][2] = 1;
 			else if (str[0].equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
 			else if (str[0].equalsIgnoreCase("OUTR")) instructionDecimal[line][2] = 3;
-			
+
 			if (str[1].equalsIgnoreCase("R0")) instructionDecimal[line][3] = 0;
 			else if (str[1].equalsIgnoreCase("R1")) instructionDecimal[line][3] = 1;
 			else if (str[1].equalsIgnoreCase("R2")) instructionDecimal[line][3] = 2;
@@ -671,12 +814,11 @@ public class Parsing {
 		else{
 			System.out.println("Transferde 2 den fazla eleman olmalı");
 		}
-		
+
 	}
-	
-	
+
 	private void Cal (String[] str, int line,File f) {
-		
+
 		if (str.length > 1) {
 			instructionDecimal[line][0] = 0; // Q = 0 (default)
 			instructionDecimal[line][1] = 10; // Opcode of 'CAL' operation
@@ -706,7 +848,7 @@ public class Parsing {
 
 							if (splitSpace[1].trim().equalsIgnoreCase("C")) {
 
-								whichLine = Integer.parseInt(splitSpace[2]) - 1;
+								whichLine = Integer.parseInt(splitSpace[2]);
 							}
 						}
 						if (splitColon.length == 2) {
@@ -733,9 +875,10 @@ public class Parsing {
 	}
 
 	private void Return(String[] str, int line){
-		
+
 		if(str.length == 1){
-			
+
+
 			instructionDecimal[line][0] = 0; // Q = 0 (default)
 			instructionDecimal[line][1] = 11; // Opcode of 'RET' operation
 			instructionDecimal[line][2] = 0; 
@@ -748,7 +891,7 @@ public class Parsing {
 	}
 
 	private void Jump(String[] str, int line){
-		
+
 		if(str.length == 1){// "JMP 23" ya da "JMP MUL"
 			if(isNumber(str[0])){// "JMP 23"
 				instructionDecimal[line][0] = 0; // Q = 0 (default)
@@ -756,24 +899,24 @@ public class Parsing {
 				instructionDecimal[line][2] = 0; 
 				instructionDecimal[line][3] = 0; 
 				instructionDecimal[line][4] = Integer.parseInt(str[0]);
-				
+
 				codeMemory[line][0] = "JMP";
 				codeMemory[line][1] = String.valueOf(Integer.parseInt(str[0]));
 			}
 			else{//"JMP MUL"
-				
+
 			}
 		}
 		else if(str.length == 2){// "JMP 23 V"
 			if(isNumber(str[0]) && str[1].equalsIgnoreCase("V")){//str[0] must be integer.str[1] must be "V" means OverFlow.
-				
+
 			}
 		}
-			
+
 	}
-	
-	
-	
+
+
+
 	private void fillTableWithMinus9 () {
 
 
@@ -785,7 +928,7 @@ public class Parsing {
 			}
 		}
 	}
-	
+
 	public boolean isNumber(String string)
 	{
 		boolean isno=false;
