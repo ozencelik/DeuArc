@@ -1,11 +1,15 @@
 ORG C 3
 LD R1,@B
 LD R0,@M
+DBL R0,R1
+DBT R2,R0
+JMP 9
+JMP 5 V
+JMR 1
 INC R1
 ADD OUTR,INPR,R0
 ST INPR,@A
-DBL R0,R1
-DBT R2,R0
+
 CAL SUB			%Call subroutine SUB
 ST	R2,@RES		%Store result to RES
 HLT

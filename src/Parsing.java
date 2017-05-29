@@ -196,9 +196,9 @@ public class Parsing {
 					int w = 0;
 					int lenLine = line.length();
 					while (w + 1 < lenLine) {
-						
+
 						if (line.substring(w, w+1).equalsIgnoreCase("%")) {
-						
+
 							line = line.substring(0,w);
 							break;
 						}
@@ -211,7 +211,7 @@ public class Parsing {
 
 					if (splitSpace.length > 1 || splitSpace[0].trim().equalsIgnoreCase("HLT") || splitSpace[0].trim().equalsIgnoreCase("RET")) {
 
-						
+
 						if (splitSpace[0].trim().equalsIgnoreCase("HLT")) splitComma = null;
 						else if (splitSpace[0].trim().equalsIgnoreCase("RET")) splitComma = null;
 						else splitComma = splitSpace[1].split(",");
@@ -311,6 +311,7 @@ public class Parsing {
 							break;
 						case "JMR":
 
+							Jmr(splitSpace, lineCounter);
 							break;
 						case "PSH":
 
@@ -327,19 +328,19 @@ public class Parsing {
 									codeMemory[cmCounter][0] = str[0];
 									codeMemory[cmCounter][1] = String.valueOf(lineCounter);
 									cmCounter++;
-									
+
 									if (str[1].trim().length() > 1) {
-										
+
 										line = line.replace("\t", " "); // Replace all tabs with 1 space.
 										line = line.replaceAll("( )+", " "); // Replace all space with one space.
-										
+
 										// COK CIRKIN OLDU FARKINDAYIM AMA IDARE EDECEZ.
 										int i = 0;
 										int len = line.length();
 										while (i + 1 < len) {
-											
+
 											if (line.substring(i, i+1).equalsIgnoreCase("%")) {
-											
+
 												line = line.substring(0,i);
 												break;
 											}
@@ -348,18 +349,18 @@ public class Parsing {
 										System.out.println("işte bu : " + line);
 										String[] butter = line.trim().split(":");
 										if (butter.length > 0) {
-										
+
 											butter[1] = butter[1].replace("\t", " "); // Replace all tabs with 1 space.
 											butter[1] = butter[1].replace("( )+", " "); // Replace all space with one space.
 											splitSpace = butter[1].trim().split(" ");
 											if (splitSpace.length > 1) {
-												
+
 												splitComma = splitSpace[1].split(",");
 											}
 											System.out.println("len : " + splitComma.length);
 										}
-										
-										
+
+
 										switch (str[1].trim()) {
 										case "ADD": // ADD operation.
 
@@ -378,7 +379,7 @@ public class Parsing {
 											Dbt (splitComma, lineCounter); // lineCounter = According to ORG
 											break;
 										case "NOT": // NOT OPERATION
-											
+
 											Not (splitComma, lineCounter); // lineCounter = According to ORG
 											break;
 										case "AND":
@@ -414,6 +415,7 @@ public class Parsing {
 											break;
 										case "JMR":
 
+											Jmr(splitSpace, lineCounter);
 											break;
 										case "PSH":
 
@@ -423,7 +425,7 @@ public class Parsing {
 											break;
 										}
 									}
-									
+
 								}
 							}
 						}
@@ -662,7 +664,7 @@ public class Parsing {
 			else if (str[0].equalsIgnoreCase("INPR")){
 				System.out.println("DESTINATION 'A INPR'Yİ VEREMEZSİNNNNNN !!!!");
 			}
-			*/
+			 */
 		}
 	}
 
@@ -692,7 +694,6 @@ public class Parsing {
 		}
 	}
 
-	
 	private void Load (String[] str, int line) {
 
 		if (str.length == 2) {
@@ -757,15 +758,15 @@ public class Parsing {
 			}
 			 */
 			if (str[1].substring(0, 1).equals("@")) {
-				
+
 				instructionDecimal[line][0] = 0; // Q = 0;Address varrr
 				instructionDecimal[line][1] = 7;
-				
+
 				if (str[0].equalsIgnoreCase("R0")) instructionDecimal[line][2] = 0;
 				else if (str[0].equalsIgnoreCase("R1")) instructionDecimal[line][2] = 1;
 				else if (str[0].equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
 				else if (str[0].equalsIgnoreCase("INPR")) instructionDecimal[line][2] = 3;
-			
+
 
 				int butterfly = 0;
 				if ((butterfly = whereisData(dataDecimal,16, str[1].substring(1), 0, true)) != -1) {
@@ -782,20 +783,20 @@ public class Parsing {
 				}
 			} 
 			else{//iki tarafında register olma durumu.EXAMPLE : "ST INPR,OUTR"
-				
+
 				instructionDecimal[line][0] = 1; // Q = 1;Address li birşeyler yok.
 				instructionDecimal[line][1] = 7;
-				
+
 				if (str[0].equalsIgnoreCase("R0")) instructionDecimal[line][2] = 0;
 				else if (str[0].equalsIgnoreCase("R1")) instructionDecimal[line][2] = 1;
 				else if (str[0].equalsIgnoreCase("R2")) instructionDecimal[line][2] = 2;
 				else if (str[0].equalsIgnoreCase("INPR")) instructionDecimal[line][2] = 3;
-				
+
 				if (str[1].equalsIgnoreCase("R0")) instructionDecimal[line][3] = 0;
 				else if (str[1].equalsIgnoreCase("R1")) instructionDecimal[line][3] = 1;
 				else if (str[1].equalsIgnoreCase("R2")) instructionDecimal[line][3] = 2;
 				else if (str[1].equalsIgnoreCase("OUTR")) instructionDecimal[line][3] = 3;
-				
+
 				instructionDecimal[line][4] = 0;
 			}
 		}
@@ -826,7 +827,6 @@ public class Parsing {
 
 	}
 
-	
 	private void Cal (String[] str, int line,File f) {
 
 		if (str.length > 1) {
@@ -871,6 +871,7 @@ public class Parsing {
 								instructionDecimal[line][2] = 0; 
 								instructionDecimal[line][3] = 0; 
 								instructionDecimal[line][4] = whichLine; //Where is SUB = whichLine
+								System.out.println("wLine : " + whichLine);
 							}
 						}
 						whichLine++;
@@ -902,30 +903,121 @@ public class Parsing {
 
 	private void Jump(String[] str, int line){
 
-		if(str.length == 1){// "JMP 23" ya da "JMP MUL"
-			if(isNumber(str[0])){// "JMP 23"
+		if(str.length == 2){// "JMP 23" ya da "JMP MUL" -- Q=0, DIREK ZIPLA
+
+			if(isNumber(str[1])){// "JMP 23"
+
+				System.out.println("JMP.len = 2 GIRDI : " + str[0]);
 				instructionDecimal[line][0] = 0; // Q = 0 (default)
 				instructionDecimal[line][1] = 12; // Opcode of 'RET' operation
 				instructionDecimal[line][2] = 0; 
 				instructionDecimal[line][3] = 0; 
-				instructionDecimal[line][4] = Integer.parseInt(str[0]);
+				instructionDecimal[line][4] = Integer.parseInt(str[1]);
 
-				codeMemory[line][0] = "JMP";
-				codeMemory[line][1] = String.valueOf(Integer.parseInt(str[0]));
+//				codeMemory[line][0] = "JMP"; // BUNU NEDEN ATIYORSUN KI KANKI? BU SAYLANMAZ. SADECE CAL FALAN OLUNCA GITTIGIMIZ YERLERIN DEGERINI ATSAK ENOUGH.
+//				codeMemory[line][1] = String.valueOf(Integer.parseInt(str[0]));
 			}
 			else{//"JMP MUL"
 
+				int butterfly = whereisData(dataDecimal, 16, str[1], 0, true);
+				instructionDecimal[line][0] = 0; // Q = 0 (default)
+				instructionDecimal[line][1] = 12; // Opcode of 'RET' operation
+				instructionDecimal[line][2] = 0; 
+				instructionDecimal[line][3] = 0;
+				instructionDecimal[line][4] = Integer.parseInt(dataDecimal[butterfly][1]); // S4 TEKI ADRESS' E ZIPLA
 			}
 		}
-		else if(str.length == 2){// "JMP 23 V"
-			if(isNumber(str[0]) && str[1].equalsIgnoreCase("V")){//str[0] must be integer.str[1] must be "V" means OverFlow.
+		else if(str.length == 3){// "JMP 23 V"
+			if(isNumber(str[1]) && str[2].equalsIgnoreCase("V")){//str[0] must be integer.str[1] must be "V" means OverFlow.
 
+				instructionDecimal[line][0] = 1; // Q = 0 (default)
+				instructionDecimal[line][1] = 12; // Opcode of 'RET' operation
+				instructionDecimal[line][2] = 0; 
+				instructionDecimal[line][3] = 0;
+				instructionDecimal[line][4] = Integer.parseInt(str[1]);
+				System.out.println("JMP.len = 3 GIRDI : " + str[1]);
+			} else if (!isNumber(str[1]) && str[2].equalsIgnoreCase("V")) { // BUNU YAPTIGI YAZILMAMIS, OPSIYON OLARAK EKLEDIM.
+
+				int butterfly = whereisData(dataDecimal, 16, str[1], 0, true);
+				instructionDecimal[line][0] = 1; // Q = 0 (default)
+				instructionDecimal[line][1] = 12; // Opcode of 'RET' operation
+				instructionDecimal[line][2] = 0; 
+				instructionDecimal[line][3] = 0;
+				instructionDecimal[line][4] = Integer.parseInt(dataDecimal[butterfly][1]);
 			}
 		}
 
 	}
 
+	private void Jmr (String[] str, int line) {
 
+		
+		int butterfly;
+		
+		int a = Integer.parseInt("1011",2);
+
+		if(str.length == 2) { // JMR 2, JMR -2, ...
+
+//			if (isNumber(str[1])) { // negatif sayıları almıyor almıyor almıyor :( :( :(
+				
+				butterfly = Integer.parseInt(str[1]);
+				instructionDecimal[line][0] = 0; // Q = 0 (default)
+				instructionDecimal[line][1] = 13; // Opcode of 'RET' operation
+				instructionDecimal[line][2] = 0; 
+				instructionDecimal[line][3] = 0;
+				instructionDecimal[line][4] = butterfly;
+//			}
+
+		} else if (str.length == 3) { // JMR A HEX, JMR 0110 BIN, ...
+
+			if (str[2].equalsIgnoreCase("HEX")) {
+
+				butterfly = Integer.parseInt(str[3],16);
+				instructionDecimal[line][0] = 0; // Q = 0 (default)
+				instructionDecimal[line][1] = 13; // Opcode of 'RET' operation
+				instructionDecimal[line][2] = 0; 
+				instructionDecimal[line][3] = 0;
+				instructionDecimal[line][4] = butterfly;
+				
+			} else if (str[2].equalsIgnoreCase("BIN")) {
+
+				if (str[1].substring(0,1).equalsIgnoreCase("1")) { // NEGATIVE ?
+
+
+					butterfly = Integer.parseInt(str[3],2);
+					instructionDecimal[line][0] = 0; // Q = 0 (default)
+					instructionDecimal[line][1] = 13; // Opcode of 'RET' operation
+					instructionDecimal[line][2] = 0; 
+					instructionDecimal[line][3] = 0;
+					instructionDecimal[line][4] = 16 - butterfly;
+				} else { // POSITIVE ?
+					
+					butterfly = Integer.parseInt(str[3],2);
+					instructionDecimal[line][0] = 0; // Q = 0 (default)
+					instructionDecimal[line][1] = 13; // Opcode of 'RET' operation
+					instructionDecimal[line][2] = 0; 
+					instructionDecimal[line][3] = 0;
+					instructionDecimal[line][4] = butterfly;
+
+				}
+			} else if (str[2].equalsIgnoreCase("DEC")) {
+				
+				if (isNumber(str[1])) {
+					
+					instructionDecimal[line][0] = 0; // Q = 0 (default)
+					instructionDecimal[line][1] = 13; // Opcode of 'RET' operation
+					instructionDecimal[line][2] = 0; 
+					instructionDecimal[line][3] = 0;
+					instructionDecimal[line][4] = Integer.parseInt(str[3]);
+				} else {
+					
+					System.out.println("Please enter a digit for JMR operation.");
+				}
+			}
+			//			int a = Integer.toBinaryString(i)
+		}
+
+	}
 
 	private void fillTableWithMinus9 () {
 
@@ -942,19 +1034,19 @@ public class Parsing {
 	public boolean isNumber(String string)
 	{
 		boolean isno=false;
-		for(int i=0; i<string.length();i++)
+		for(int i=0; i<string.length();i++) // GELEN STRING'IN HER ELEMANINI TEK TEK (CHAR CHAR) DONECEK FOR LOOP.
 		{
 			isno = false;
 			char ch = string.charAt(i);
 			int x = (int) ch;
-			for(int j=48; j<=57;j++)
+			for(int j=48; j<=57;j++) // STRING'IN CEBE ATTIGIMIZ TEK CHARACTERI 0 - 9 ARASINDA MI?
 			{
-				if(x==j)
+				if(x==j) // 0 - 9 ARASINDA HER HANGI BIR SAYIYA ESITSE TRUE.
 				{
 					isno=true;
 				}
 			}
-			if(isno==false)
+			if(isno==false) // 0 - 9 ARASINDAKİ HICBIR SAYIYA ESIT DEGILSE, DEMEK KI ICINDE INTEGER HARICI BIR SEY VAR.
 			{
 				break;
 			}

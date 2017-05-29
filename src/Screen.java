@@ -68,7 +68,7 @@ public class Screen {
 
 	private int[][] tableDecimalLabel;
 	private String[][] tableLabel;
-	
+
 	private String[][] tableCodeMemory;
 
 	Parsing parse;
@@ -111,12 +111,12 @@ public class Screen {
 		tableDecimalLabel = new int[16][4];
 
 		tableCodeMemory = new String[32][2];
-		
+
 		parse = new Parsing("deneme1.txt");
 		tableDecimalInstruction = parse.getInstructionDecimal();
 		tableData = parse.getDataDecimal();
 		tableCodeMemory = parse.getCodeMemory();
-		
+
 		frame = Management.frame;
 		addContentsToFrame();
 		tableInstruction = toBinary(tableDecimalInstruction);
@@ -339,7 +339,7 @@ public class Screen {
 	}
 
 	private void updateOutr() {
-	
+
 		if (textfieldOutr.getText().substring(0,1).equalsIgnoreCase("E")) { // E means I have to multiply with minus 1.
 			// When I directly multiply with minus 1, the function that convert to binary is add one 28 times, because integer can be 32 bit.
 
@@ -381,7 +381,7 @@ public class Screen {
 			}
 		}
 	}
-	
+
 	private String[][] toHex (int[][] arr) { // toBinary GIBI YAPMAK LAZIM
 
 		String[][] butterfly = new String[32][5];
@@ -444,26 +444,60 @@ public class Screen {
 						butterfly[i][1] = fillZeros(Integer.toBinaryString(arr[i][1]), 4); // Opcode.length must be equals 4.
 						butterfly[i][2] = fillZeros(Integer.toBinaryString(arr[i][2]), 2); // D must be 2 digit.
 
-						if (arr[i][4] < 2) {
+						if (arr[i][4] > -1) {
 
-							butterfly[i][3] = "00";
-							butterfly[i][4] = "0" + Integer.toBinaryString(arr[i][4]);
-						} else if (arr[i][4] < 4) {
+							if (arr[i][4] < 2) {
 
-							butterfly[i][3] = "00";
-							butterfly[i][4] = Integer.toBinaryString(arr[i][4]);
+								butterfly[i][3] = "00";
+								butterfly[i][4] = "0" + Integer.toBinaryString(arr[i][4]);
+							} else if (arr[i][4] < 4) {
 
-						} else if (arr[i][4] < 8) {
+								butterfly[i][3] = "00";
+								butterfly[i][4] = Integer.toBinaryString(arr[i][4]);
 
-							String butterMıFly = Integer.toBinaryString(arr[i][4]);
-							butterfly[i][3] = "0" + butterMıFly.substring(0,1);
-							butterfly[i][4] = butterMıFly.substring(2);
-						} else if (arr[i][4] < 16) {
-							String butterMıFly = Integer.toBinaryString(arr[i][4]);
-							butterfly[i][3] = butterMıFly.substring(0, 2);
-							butterfly[i][4] = butterMıFly.substring(2);
+							} else if (arr[i][4] < 8) {
+
+								String butterMıFly = Integer.toBinaryString(arr[i][4]);
+								butterfly[i][3] = "0" + butterMıFly.substring(0,1);
+								butterfly[i][4] = butterMıFly.substring(1);
+							} else if (arr[i][4] < 16) {
+								String butterMıFly = Integer.toBinaryString(arr[i][4]);
+								butterfly[i][3] = butterMıFly.substring(0, 2);
+								butterfly[i][4] = butterMıFly.substring(2);
+							} else if (arr[i][4] < 32) {
+
+								if (arr[i][2] == 0) {
+
+									String butterMıFly = Integer.toBinaryString(arr[i][4]);
+									butterfly[i][2] = "0" + butterMıFly.substring(0,1);
+									butterfly[i][3] = butterMıFly.substring(1, 3);
+									butterfly[i][4] = butterMıFly.substring(3);
+								}
+							}
 						}
+						else {
+							
+							String butterMıFly = Integer.toBinaryString(arr[i][4]);
+							int len = butterMıFly.length();
+							butterMıFly = butterMıFly.substring(len - 5);
+							
+							if (arr[i][4] < -16) {
 
+								if (arr[i][2] == 0) {
+
+									
+									butterfly[i][2] = "1" + butterMıFly.substring(0,1);
+									butterfly[i][3] = butterMıFly.substring(1, 3);
+									butterfly[i][4] = butterMıFly.substring(3);
+								}
+							}
+							else {
+								
+								butterfly[i][2] = "1" + butterMıFly.substring(0,1);
+								butterfly[i][3] = butterMıFly.substring(1, 3);
+								butterfly[i][4] = butterMıFly.substring(3);
+							}
+						}
 						break;
 					}
 				}
@@ -481,7 +515,7 @@ public class Screen {
 
 		return butterfly;
 	}
-	
+
 	private String[][] toDecimal (int[][] arr) { // toBinary GIBI YAPMAK LAZIM
 
 		String[][] butterfly = new String[32][5];
@@ -975,7 +1009,7 @@ public class Screen {
 		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
 		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
 		int value = 0;
-		
+
 		switch ( arr[ i ][1] ) {
 
 		case 0: // ADD
@@ -991,38 +1025,56 @@ public class Screen {
 
 			break;
 		case 1: // INC
-			
+
 			textfieldT3.setText("D <- S1+1 , SC <- 0");
 			textfieldT3.setVisible(true);
 			labelT3.setVisible(true);
 
 			incT3();// ALL CONTROL IS IN THIS FUNC.
 			isNextLine = true;
-			
+
 			break;
 		case 2: // DBL
 
+			textfieldT3.setText(" D <- S1 * 2, SC <- 0");
+			textfieldT3.setVisible(true);
+			labelT3.setVisible(true);
+			isNextLine = true;
+			howInvisible = 3;
 			dblT3();
-			
+
 			isNextLine = true;
 			break;
 		case 3: // DBT
 
+			textfieldT3.setText(" D <- S1 / 2, SC <- 0");
+			textfieldT3.setVisible(true);
+			labelT3.setVisible(true);
+			isNextLine = true;
+			howInvisible = 3;
 			dbtT3();
 
 			isNextLine = true;
 			break;
 		case 4: // NOT
 
-
-			 notT3();
+			textfieldT3.setText(" D <- S1', SC <- 0");
+			textfieldT3.setVisible(true);
+			labelT3.setVisible(true);
+			isNextLine = true;
+			howInvisible = 3;
+			notT3();
 
 			isNextLine = true;
 			break;
 		case 5: // AND
 
+			textfieldT3.setText(" D <- S1^S2, SC <- 0");
+			textfieldT3.setVisible(true);
+			labelT3.setVisible(true);
+			isNextLine = true;
+			howInvisible = 3;
 			andT3();
-			
 			isNextLine = true;
 			break;
 		case 6: // LD
@@ -1033,14 +1085,18 @@ public class Screen {
 				textfieldT3.setText(" AR <- S1S2");
 				textfieldT3.setVisible(true);
 				labelT3.setVisible(true);
-				textfieldAddr.setText(tableInstruction[ butterfly ][3] + tableInstruction[ butterfly ][4]);
+				
+				//textfieldAddr.setText(tableInstruction[ butterfly ][3] + tableInstruction[ butterfly ][4]);
+				textfieldAddr.setText(""+butterfly);
 			}
 			else { // Q == 1 ( #directInteger ) Integer value equals S1S2.
 
 				textfieldT3.setText("D <- S1S2, SC <- 0");
 				textfieldT3.setVisible(true);
 				labelT3.setVisible(true);
-
+				howInvisible = 3;
+				isNextLine = true;
+				
 				butterfly = Integer.parseInt(textfieldAddr.getText());
 				textfieldAddr.setText(tableInstruction[ butterfly ][3] + tableInstruction[ butterfly ][3]);
 
@@ -1073,8 +1129,9 @@ public class Screen {
 				textfieldT3.setText(" AR <- S1S2");
 				textfieldT3.setVisible(true);
 				labelT3.setVisible(true);
-				textfieldAddr.setText(tableInstruction[ butterfly ][3] + tableInstruction[ butterfly ][4]);
-
+				howInvisible = 3;
+				
+				textfieldAddr.setText(""+butterfly);
 			}
 			else { 
 
@@ -1083,8 +1140,8 @@ public class Screen {
 				labelT3.setVisible(true);
 
 				stQT3();
-			
-			
+
+
 				isNextLine = true;
 			}
 
@@ -1105,27 +1162,50 @@ public class Screen {
 			stackDtm.setValueAt(instructionMemory.getCounter(), SP, 1);
 			tableStack[SP][0] = String.valueOf(instructionMemory.getCounter());
 			stackMemory.increaseCounter();
-			
+
 			instructionMemory.setCounter(Integer.parseInt(tableLabel[6][2]));
 			System.out.println("PC : " + tableStack[SP][0]);
 			isNextLine = true;
 			break;
 		case 11: // RET
-
 			
+			textfieldT3.setText(" SP <- SP - 1");
+			textfieldT3.setVisible(true);
+			labelT3.setVisible(true);
+
 			stackMemory.setCounter(stackMemory.getCounter() - 1);
-			int SP2 = stackMemory.getCounter();
-			stackDtm.setValueAt(-1, SP2, 1);
-			instructionMemory.setCounter(Integer.parseInt(tableStack[SP2][0]));
-			System.out.println("PC : " + tableStack[SP2][0]);
+			T4(arr[i][0]);
 			//			instructionMemory.setCounter(counter);
-			isNextLine = true;
 			break;
 		case 12: // JMP
+
+			if (tableDecimalInstruction[ butterfly ][0] == 0) { // Q = 0, SO JUMP TO ADRESS DIRECTLY.
+
+				textfieldT3.setText(" PC <- IR[4..0], SC <- 0");
+				textfieldT3.setVisible(true);
+				labelT3.setVisible(true);
+				isNextLine = true;
+				howInvisible = 3;
+				instructionMemory.setCounter(tableDecimalInstruction[ butterfly ][4]);
+
+			} else { // Q = 1, SO CHECK THE V (ISOVERFLOW) AND JUMP IF V = 1.
+
+				// OVERFLOW ISINI NASIL YAPICAZ ?
+			}
+
+
 
 			isNextLine = true;
 			break;
 		case 13: // JMR
+
+			textfieldT3.setText(" PC <- PC + IR[3..0], SC <- 0");
+			textfieldT3.setVisible(true);
+			labelT3.setVisible(true);
+			isNextLine = true;
+			howInvisible = 3;
+
+			instructionMemory.setCounter(instructionMemory.getCounter() + tableDecimalInstruction[ butterfly ][4]);
 
 			isNextLine = true;
 			break;
@@ -1152,6 +1232,11 @@ public class Screen {
 
 		int butterfly = Integer.parseInt(textfieldPc.getText()) - 1;
 
+		if (i == 11) {
+			
+			System.out.println("11");
+		}
+		
 		switch (i) {
 
 		case 6: // LD
@@ -1189,10 +1274,10 @@ public class Screen {
 			textfieldT4.setText("DM[AR] <- D, SC <- 0");
 			textfieldT4.setVisible(true);
 			labelT4.setVisible(true);
-			
+
 			stT4();
 			isNextLine = true;
-			
+
 			break;
 		case 8: // HLT
 
@@ -1205,6 +1290,17 @@ public class Screen {
 			break;
 		case 11: // RET
 
+			textfieldT4.setText(" PC <- SM[SP], SC <- 0");
+			textfieldT4.setVisible(true);
+			labelT4.setVisible(true);
+			howInvisible = 4;
+			
+			int SP2 = stackMemory.getCounter();
+			stackDtm.setValueAt(-1, SP2, 1);
+			instructionMemory.setCounter(Integer.parseInt(tableStack[SP2][0]));
+			System.out.println("PC : " + tableStack[SP2][0]);
+			
+			isNextLine = true;
 			break;
 		case 12: // JMP
 
@@ -1310,7 +1406,7 @@ public class Screen {
 		return lineAndcase;
 	}
 
-	public void writeIntoRegister () {
+	public void writeIntoRegister () {//For ADD function
 
 
 		int case0, whichCase, R0Value = -1, R1Value = -1, R2Value = -1, RinValue = -1;
@@ -2024,7 +2120,7 @@ public class Screen {
 		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
 		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
 		int value = 0;
-		
+
 		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
 
@@ -2033,9 +2129,9 @@ public class Screen {
 
 		if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
-		
+
 		if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText());
-		
+
 
 		if (tableInstruction[ butterfly ][2].equalsIgnoreCase("00")) {
 
@@ -2070,8 +2166,8 @@ public class Screen {
 				textfieldR0.setText( String.valueOf( value ) );
 				updateR0();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
-				
-				
+
+
 				textfieldR1.setText("");
 				if ( Rin + 1 > 15 ) {
 
@@ -2117,8 +2213,8 @@ public class Screen {
 				textfieldR1.setText( String.valueOf( value ) );
 				updateR1();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
-				
-				
+
+
 				textfieldR1.setText("");
 				if ( Rin + 1 > 15 ) {
 
@@ -2164,8 +2260,8 @@ public class Screen {
 				textfieldR2.setText( String.valueOf( value ) );
 				updateR2();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
-				
-				
+
+
 				textfieldR2.setText("");
 				if ( Rin + 1 > 15 ) {
 
@@ -2178,8 +2274,8 @@ public class Screen {
 			} else System.out.println("Inc işleminde, boş beleş bir register seçmişsiniz :(");
 		}
 		else if (tableDecimalInstruction[ butterfly ][2] == 3) {
-			
-			
+
+
 			if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) { // == 0 (R0)
 
 				textfieldOutr.setText("");
@@ -2214,8 +2310,8 @@ public class Screen {
 				textfieldOutr.setText( String.valueOf( value ) );
 				updateOutr();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
-				
-				
+
+
 				textfieldOutr.setText("");
 				if ( Rin + 1 > 15 ) {
 
@@ -2228,19 +2324,19 @@ public class Screen {
 			} else System.out.println("Inc işleminde, boş beleş bir register seçmişsiniz :(");
 		}
 		else {
-			
+
 			System.out.println("INC işleminde, böyle bir registerı seçemezsin");
 		}
 
 		isNextLine = true;
 	}
-	
+
 	public void dblT3(){
-		
+
 		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
 		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
 		int value = 0;
-		
+
 		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
 
@@ -2249,7 +2345,7 @@ public class Screen {
 
 		if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
-		
+
 		if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
 
@@ -2286,8 +2382,8 @@ public class Screen {
 				textfieldR0.setText( String.valueOf( value ) );
 				updateR0();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
-				
-				
+
+
 				textfieldOutr.setText("");
 				if ( Rin * 2 > 15 ) {
 
@@ -2298,7 +2394,7 @@ public class Screen {
 				textfieldR0.setText( String.valueOf( value ) );
 				updateR0();
 			} else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz1 :(");
-			
+
 		} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("01")) { 
 
 
@@ -2333,8 +2429,8 @@ public class Screen {
 				textfieldR1.setText( String.valueOf( value ) );
 				updateR1();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
-				
-				
+
+
 				textfieldOutr.setText("");
 				if ( Rin * 2 > 15 ) {
 
@@ -2345,7 +2441,7 @@ public class Screen {
 				textfieldR1.setText( String.valueOf( value ) );
 				updateR1();
 			} else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz2 :(");
-			
+
 		} else if (tableInstruction[ butterfly ][2].equalsIgnoreCase("10")) {
 
 			if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
@@ -2379,8 +2475,8 @@ public class Screen {
 				textfieldR2.setText( String.valueOf( value ) );
 				updateR2();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
-				
-				
+
+
 				textfieldOutr.setText("");
 				if ( Rin * 2 > 15 ) {
 
@@ -2391,9 +2487,9 @@ public class Screen {
 				textfieldR2.setText( String.valueOf( value ) );
 				updateR2();
 			} else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz3 :(");
-			
+
 		} else if (tableDecimalInstruction[ butterfly ][2] == 3) {
-			
+
 			if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) { // == 0 (R0)
 
 				textfieldOutr.setText("");
@@ -2428,8 +2524,8 @@ public class Screen {
 				textfieldOutr.setText( String.valueOf( value ) );
 				updateOutr();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && Rin != -1) {
-				
-				
+
+
 				textfieldOutr.setText("");
 				if ( Rin * 2 > 15 ) {
 
@@ -2442,18 +2538,18 @@ public class Screen {
 			} else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz5 :(");
 		}
 		else {
-			
+
 			System.out.println("DBL işleminde, böyle bir registerı seçemezsin");
 		}
 
 	}
 
 	public void dbtT3(){
-		
+
 		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
 		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
 		int value = 0;
-		
+
 		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
 
@@ -2538,7 +2634,7 @@ public class Screen {
 			}
 			else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz :(");
 		} else if (tableDecimalInstruction[ butterfly ][2] == 3) {
-			
+
 			if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) {
 
 				textfieldOutr.setText("");
@@ -2563,17 +2659,17 @@ public class Screen {
 			else System.out.println("Dbl işleminde, boş beleş bir register seçmişsiniz :(");
 		}
 		else {
-			
+
 			System.out.println("DBL işleminde, böyle bir registerı seçemezsin");
 		}
 	}
-	
+
 	public void notT3(){
-		
+
 		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
 		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
 		int value = 0;
-		
+
 		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
 
@@ -2646,7 +2742,7 @@ public class Screen {
 				textfieldR2.setText( "E" + String.valueOf( R2 ) );
 				updateR2();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && R2 != -1) {
-				
+
 				textfieldR2.setText("");
 				textfieldR2.setText( "E" + String.valueOf( Rin ) );
 				updateR2();
@@ -2669,20 +2765,20 @@ public class Screen {
 				textfieldOutr.setText( "E" + String.valueOf( R2 ) );
 				updateOutr();
 			} else if (tableDecimalInstruction[ butterfly ][3] == 3 && R2 != -1) {
-				
+
 				textfieldOutr.setText("");
 				textfieldOutr.setText( "E" + String.valueOf( Rin ) );
 				updateOutr();
 			} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 		}
 	}
-	
+
 	public void andT3(){
-		
+
 		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
 		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
 		int value = 0;
-		
+
 		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
 
@@ -2691,10 +2787,10 @@ public class Screen {
 
 		if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
-		
+
 		if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
-		
+
 
 		if (tableDecimalInstruction[ butterfly ][2] == 0) { // D == R2
 
@@ -2797,7 +2893,7 @@ public class Screen {
 				} else System.out.println("Boş beleş bir register seçmişsiniz :(");
 
 			} else System.out.println("Boş beleş bir register seçmişsiniz :(");
-			
+
 		} else if (tableDecimalInstruction[ butterfly ][2] == 1) {
 
 
@@ -3004,8 +3100,8 @@ public class Screen {
 
 			} else System.out.println("S1, i, boş beleş bir register seçmişsiniz :(");
 		} else if (tableDecimalInstruction[ butterfly ][2] == 3) {
-			
-			
+
+
 			if (tableDecimalInstruction[ butterfly ][3] == 0 && R0 != -1) { // D == R2 && S1 == R0
 
 				if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R0 && S2 == R0 ise
@@ -3069,7 +3165,7 @@ public class Screen {
 					textfieldOutr.setText( String.valueOf( R2 & Rin ) );
 					updateOutr();
 				} else System.out.println("Boş beleş bir register seçmişsiniz :(");
-				
+
 			}  else if (tableDecimalInstruction[ butterfly ][3] == 3 && R2 != -1) { // D == R2 && S1 == R2
 
 				if (tableDecimalInstruction[ butterfly ][4] == 0 && R0 != -1) { // D == R2 && S1 == R2 && S2 == R0
@@ -3097,13 +3193,13 @@ public class Screen {
 		} else System.out.println("Böyle bir register yok ki yazasın üstüne bir şeyler");
 
 	}
-	
+
 	public void stQT3(){
-		
+
 		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
 		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
 		int value = 0;
-		
+
 		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
 		// it will return integer according to clicked button. (hexa, binary, decimal)
 
@@ -3115,7 +3211,7 @@ public class Screen {
 
 		if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText());
 		// it will return integer according to clicked button. (hexa, binary, decimal)
-		
+
 		/////////////////////////////////////
 		if (tableDecimalInstruction[ butterfly ][2] == 0 && R0 != -1) { // D == R0
 
@@ -3132,9 +3228,9 @@ public class Screen {
 				textfieldOutr.setText(""+R0);
 				updateOutr();
 			} else System.out.println("Boş beleş bir register seçmişsiniz :(");
-			
+
 		} else if (tableDecimalInstruction[ butterfly ][2] == 1 && R1 != -1) {
-		
+
 			if (tableDecimalInstruction[ butterfly ][3] == 0) { // D == R0 && S1 == R0
 				textfieldR0.setText(""+R1);
 				updateR0();
@@ -3165,7 +3261,7 @@ public class Screen {
 			} 
 		}
 		else if (tableDecimalInstruction[ butterfly ][2] == 3 && Rin != -1) {
-			
+
 			if (tableDecimalInstruction[ butterfly ][3] == 0) { // D == R0 && S1 == R0
 				textfieldR0.setText(""+Rin);
 				updateR0();
@@ -3182,9 +3278,74 @@ public class Screen {
 		}
 		////////////////////////////////////
 	}
-	
+
+	public boolean writeIntoData(int ara,int data){//ara=q, data = yazacagım değer
+
+		boolean isOkay = false;
+		int size = tableData.length;
+		int q;
+		for (q = 0; q < size; q++) {
+
+			if ((q == ara) && (tableData[q][0] != null || tableData[q][0].equalsIgnoreCase(" "))) { // [][1] de
+				isOkay = true;
+				tableData[q][1] = String.valueOf(data);
+
+				System.out.println("ARRR MIII :"+tableData[q][0]+"  "+tableData[q][1]+"  "+tableData[q][2]);
+				break;
+			}
+		}
+		return isOkay;
+
+	}
+
+	public void stT4(){//Q = 0;
+
+		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
+		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
+		int value = 0;
+
+		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
+		// it will return integer according to clicked button. (hexa, binary, decimal)
+
+		if (textfieldR1.getText().length() > 0) R1 = getInteger(textfieldR1.getText()); 
+		// it will return integer according to clicked button. (hexa, binary, decimal)
+
+		if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
+		// it will return integer according to clicked button. (hexa, binary, decimal)
+
+		if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText());
+		// it will return integer according to clicked button. (hexa, binary, decimal)
+
+		/////////////////////////////////////
+		if (tableDecimalInstruction[ butterfly ][2] == 0 && R0 != -1) { // D == R0
+
+			if(!writeIntoData(tableDecimalInstruction[ butterfly ][4], R0))
+				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
+
+		} else if (tableDecimalInstruction[ butterfly ][2] == 1 && R1 != -1) {
+			if(!writeIntoData(tableDecimalInstruction[ butterfly ][4], R1))
+				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
+
+		}else if (tableDecimalInstruction[ butterfly ][2] == 2 && R2 != -1) {
+			if(!writeIntoData(tableDecimalInstruction[ butterfly ][4], R2))
+				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
+
+		}
+		else if (tableDecimalInstruction[ butterfly ][2] == 3 && Rin != -1) {
+			if(!writeIntoData(tableDecimalInstruction[ butterfly ][4], Rin))
+				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
+		}
+
+		fillLabelArrayFromData(tableData);
+		fillLabelArrayFromcodeMem(tableCodeMemory);
+		fillTable();
+		
+		howInvisible = 4;
+	}
+
 	public void fillLabelArrayFromData (String[][] str) {
 
+		tableLabelCounter = 0;
 		for (int i = 0; i < str.length; i++) {
 
 			if (str[i][1] != null) {
@@ -3198,11 +3359,11 @@ public class Screen {
 	}
 
 	public void fillLabelArrayFromcodeMem (String[][] str) {
-		
+
 		for (int i = 0; i < str.length; i++) {
-			
+
 			if (str[i][0] != null) {
-				
+
 				tableLabel[tableLabelCounter][1] = str[i][0];
 				tableLabel[tableLabelCounter][2] = str[i][1];
 				tableLabel[tableLabelCounter][3] = "CM";
@@ -3210,6 +3371,7 @@ public class Screen {
 			}
 		}
 	}
+
 	private void textBeInvisible(int i) { // i equals the last operation
 
 		if (i == 3) {
@@ -3314,25 +3476,19 @@ public class Screen {
 			canWrite = true;
 			sumInstruction = "";
 			for(int j = 0; j < tableInstruction[i].length; j++){
-				if(tableInstruction[i][j].equalsIgnoreCase("-9"))
-					sumInstruction += "0";
-				else if(tableInstruction[i][j].equalsIgnoreCase("-1")){
-					canWrite = false;
-				}
-				else
-					sumInstruction += tableInstruction[i][j];
+				if(tableInstruction[i][j].equalsIgnoreCase("-9")) sumInstruction += "0";
+				else if(tableInstruction[i][j].equalsIgnoreCase("-1")) canWrite = false;
+				else sumInstruction += tableInstruction[i][j];
 			}
 			if(canWrite){
 				if(i < 10){
-					if(i == 0)
-						fileWriter.write(i+"  : "+fillZeros(sumInstruction,11)+"		-- memory address : data\n");
+					if(i == 0) fileWriter.write(i+"  : "+fillZeros(sumInstruction,11)+"		-- memory address : data\n");
 					else fileWriter.write(i+"  : "+fillZeros(sumInstruction,11)+"\n");
 				}
 				else fileWriter.write(i+" : "+fillZeros(sumInstruction,11)+"\n");
 			}
 			else{
-				if(i < 10)
-					fileWriter.write(i+"  : "+fillZeros("0",11)+"\n");
+				if(i < 10) fileWriter.write(i+"  : "+fillZeros("0",11)+"\n");
 				else fileWriter.write(i+" : "+fillZeros("0",11)+"\n");
 			}
 		}
@@ -3341,65 +3497,6 @@ public class Screen {
 		fileWriter.close();
 	}
 
-	public boolean writeIntoData(String[][]arr,int ara,int data){//arr = tableData, ara=q, data = yazacagım değer
-		
-		boolean isOkay = false;
-		int size = arr.length;
-		int q;
-		for (q = 0; q < size; q++) {
-
-			if ((q == ara) && (arr[q][0] != null || arr[q][0].equalsIgnoreCase(" "))) { // [][1] de
-				isOkay = true;
-				arr[q][1] = String.valueOf(data);
-				
-				System.out.println("ARRR MIII :"+arr[q][0]+"  "+arr[q][1]+"  "+arr[q][2]);
-				break;
-			}
-		}
-		return isOkay;
-		
-	}
-	
-	public void stT4(){//Q = 0;
-	
-		int R0 = -1, R1 = -1, R2 = -1, Rin = -1;
-		int butterfly = Integer.parseInt(textfieldAddr.getText()); // FOR THE VALUE OF PROGRAM COUNTER.
-		int value = 0;
-		
-		if (textfieldR0.getText().length() > 0) R0 = getInteger(textfieldR0.getText()); 
-		// it will return integer according to clicked button. (hexa, binary, decimal)
-
-		if (textfieldR1.getText().length() > 0) R1 = getInteger(textfieldR1.getText()); 
-		// it will return integer according to clicked button. (hexa, binary, decimal)
-
-		if (textfieldR2.getText().length() > 0) R2 = getInteger(textfieldR2.getText()); 
-		// it will return integer according to clicked button. (hexa, binary, decimal)
-
-		if (textfieldInpr.getText().length() > 0) Rin = getInteger(textfieldInpr.getText());
-		// it will return integer according to clicked button. (hexa, binary, decimal)
-		
-		/////////////////////////////////////
-		if (tableDecimalInstruction[ butterfly ][2] == 0 && R0 != -1) { // D == R0
-
-			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], R0))
-					System.out.println("Data Table a değer yazılamadı...St T4 teyim");
-			
-		} else if (tableDecimalInstruction[ butterfly ][2] == 1 && R1 != -1) {
-			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], R1))
-				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
-		
-		}else if (tableDecimalInstruction[ butterfly ][2] == 2 && R2 != -1) {
-			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], R2))
-				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
-			
-		}
-		else if (tableDecimalInstruction[ butterfly ][2] == 3 && Rin != -1) {
-			if(!writeIntoData(tableData, tableDecimalInstruction[ butterfly ][4], Rin))
-				System.out.println("Data Table a değer yazılamadı...St T4 teyim");
-		}
-	}
-	
-	
 	private String fillZeros(String str, int wordLength){
 
 		int length = str.length();
